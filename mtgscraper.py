@@ -92,17 +92,24 @@ def print_menu():
     print(format_menu_line('  ' + Fore.YELLOW + '5.  ' + Fore.WHITE + 'View Card Details' + Style.RESET_ALL))
     print(format_menu_line('  ' + Fore.YELLOW + '6.  ' + Fore.WHITE + 'Database Statistics' + Style.RESET_ALL))
     print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
+    print(format_menu_line('  ' + Fore.MAGENTA + Style.BRIGHT + 'DBT ANALYTICS' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
+    print(format_menu_line('  ' + Fore.YELLOW + '7.  ' + Fore.WHITE + 'Run dbt Models ' + Fore.GREEN + '(Transform Data)' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '8.  ' + Fore.WHITE + 'Run dbt Tests ' + Fore.CYAN + '(Data Quality)' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '9.  ' + Fore.WHITE + 'View Analytics Results' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '10. ' + Fore.WHITE + 'Generate dbt Docs' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
     print(format_menu_line('  ' + Fore.CYAN + Style.BRIGHT + 'EXPORT & AUTOMATE' + Style.RESET_ALL))
     print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.YELLOW + '7.  ' + Fore.WHITE + 'Export to CSV' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '8.  ' + Fore.WHITE + 'Upload to S3' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '9.  ' + Fore.WHITE + 'Schedule Cron Job' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '10. ' + Fore.WHITE + 'Remove Cron Jobs' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '11. ' + Fore.WHITE + 'Export to CSV' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '12. ' + Fore.WHITE + 'Upload to S3' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '13. ' + Fore.WHITE + 'Schedule Cron Job' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '14. ' + Fore.WHITE + 'Remove Cron Jobs' + Style.RESET_ALL))
     print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
     print(format_menu_line('  ' + Fore.YELLOW + Style.BRIGHT + 'SETTINGS' + Style.RESET_ALL))
     print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.YELLOW + '11. ' + Fore.WHITE + 'Configure Settings' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '12. ' + Fore.WHITE + 'Clear Database ' + Fore.RED + '(Warning!)' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '15. ' + Fore.WHITE + 'Configure Settings' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '16. ' + Fore.WHITE + 'Clear Database ' + Fore.RED + '(Warning!)' + Style.RESET_ALL))
     print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
     print(format_menu_line('  ' + Fore.RED + '0.  ' + Fore.WHITE + 'Exit' + Style.RESET_ALL))
     print(Fore.MAGENTA + '╚══════════════════════════════════════════════════════╝')
@@ -1327,6 +1334,290 @@ def remove_cron():
         print()
 
 
+def run_dbt_models():
+    '''
+    Run dbt models to transform data
+    '''
+    print(Fore.YELLOW + '\n━━━ RUN DBT MODELS ━━━\n')
+    
+    # Check if dbt is installed
+    try:
+        import subprocess
+        result = subprocess.run(['dbt', '--version'], capture_output=True, text=True)
+        if result.returncode != 0:
+            raise FileNotFoundError
+    except FileNotFoundError:
+        print_error('dbt is not installed!')
+        print()
+        print('Install dbt with:')
+        print(Fore.CYAN + '  pip install dbt-core dbt-sqlite')
+        print()
+        return
+    
+    # Check if database exists
+    db_path = os.path.join(os.getcwd(), 'mtg_cards.db')
+    if not os.path.exists(db_path):
+        print_error('No database found. Run a scrape first!')
+        return
+    
+    print_info('Running dbt models to transform your data...')
+    print()
+    
+    try:
+        import subprocess
+        
+        # Run dbt with profiles in current directory
+        env = os.environ.copy()
+        env['DBT_PROFILES_DIR'] = os.getcwd()
+        
+        result = subprocess.run(
+            ['dbt', 'run', '--profiles-dir', '.'],
+            capture_output=True,
+            text=True,
+            env=env
+        )
+        
+        print(result.stdout)
+        
+        if result.returncode == 0:
+            print()
+            print_success('dbt models completed successfully!')
+            print_info('Analytics tables created:')
+            print(Fore.CYAN + '  • card_price_stats - Price statistics by card')
+            print(Fore.CYAN + '  • price_trends - Price changes over time')
+            print(Fore.CYAN + '  • top_cards - Top cards by various metrics')
+            print()
+        else:
+            print_error('dbt run failed!')
+            print(result.stderr)
+            
+    except Exception as e:
+        print_error(f'Failed to run dbt: {str(e)}')
+
+
+def run_dbt_tests():
+    '''
+    Run dbt tests for data quality
+    '''
+    print(Fore.YELLOW + '\n━━━ RUN DBT TESTS ━━━\n')
+    
+    print_info('Running data quality tests...')
+    print()
+    
+    try:
+        import subprocess
+        
+        env = os.environ.copy()
+        env['DBT_PROFILES_DIR'] = os.getcwd()
+        
+        result = subprocess.run(
+            ['dbt', 'test', '--profiles-dir', '.'],
+            capture_output=True,
+            text=True,
+            env=env
+        )
+        
+        print(result.stdout)
+        
+        if result.returncode == 0:
+            print()
+            print_success('All tests passed! ✓')
+        else:
+            print()
+            print_error('Some tests failed. Check output above.')
+            
+    except Exception as e:
+        print_error(f'Failed to run tests: {str(e)}')
+
+
+def view_dbt_analytics():
+    '''
+    View dbt analytics results
+    '''
+    db_path = os.path.join(os.getcwd(), 'mtg_cards.db')
+    
+    if not os.path.exists(db_path):
+        print_error('No database found. Run a scrape first!')
+        return
+    
+    print(Fore.YELLOW + '\n━━━ DBT ANALYTICS RESULTS ━━━\n')
+    
+    print(Fore.CYAN + 'Select analytics to view:')
+    print('  1. Card Price Statistics')
+    print('  2. Price Trends Over Time')
+    print('  3. Top Cards (Hottest Cards)')
+    print('  4. Custom SQL Query')
+    print()
+    
+    choice = input(Fore.GREEN + 'Select option [1]: ' + Style.RESET_ALL).strip()
+    choice = choice if choice else '1'
+    
+    try:
+        from sqlalchemy import text
+        engine = create_engine(f'sqlite:///{db_path}')
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        
+        if choice == '1':
+            # Card price statistics
+            result = session.execute(text('SELECT * FROM card_price_stats ORDER BY avg_price DESC LIMIT 20'))
+            rows = result.fetchall()
+            
+            if rows:
+                print()
+                print_info('Top 20 Cards by Average Price:\n')
+                headers = ['Card Name', 'Set', 'Listings', 'Min $', 'Avg $', 'Max $', 'Spread']
+                table_rows = []
+                for row in rows:
+                    table_rows.append([
+                        row[0][:30],  # card_name
+                        row[1][:15],  # set_name
+                        row[2],       # listing_count
+                        f'${row[3]:.2f}',   # min_price
+                        f'${row[5]:.2f}',   # avg_price
+                        f'${row[4]:.2f}',   # max_price
+                        f'${row[12]:.2f}'   # price_spread
+                    ])
+                print(tabulate(table_rows, headers=headers, tablefmt='grid'))
+            else:
+                print_info('No analytics data. Run dbt models first (option 7)!')
+                
+        elif choice == '2':
+            # Price trends
+            card_filter = input(Fore.CYAN + '\nEnter card name (leave empty for all): ' + Style.RESET_ALL).strip()
+            
+            if card_filter:
+                result = session.execute(
+                    text(f"SELECT * FROM price_trends WHERE card_name LIKE '%{card_filter}%' ORDER BY scraped_date DESC LIMIT 30")
+                )
+            else:
+                result = session.execute(text('SELECT * FROM price_trends ORDER BY scraped_date DESC LIMIT 30'))
+            
+            rows = result.fetchall()
+            
+            if rows:
+                print()
+                print_info('Price Trends (Last 30 Days):\n')
+                headers = ['Date', 'Card', 'Avg $', 'Change $', 'Change %']
+                table_rows = []
+                for row in rows:
+                    change_pct = f"{row[6]:.1f}%" if row[6] else 'N/A'
+                    table_rows.append([
+                        row[2],       # date
+                        row[0][:30],  # card_name
+                        f'${row[4]:.2f}',   # avg_price
+                        f'${row[5]:.2f}' if row[5] else 'N/A',   # change
+                        change_pct
+                    ])
+                print(tabulate(table_rows, headers=headers, tablefmt='grid'))
+            else:
+                print_info('No trend data. Run dbt models first (option 7)!')
+                
+        elif choice == '3':
+            # Top cards
+            result = session.execute(text('SELECT * FROM top_cards ORDER BY hotness_score DESC LIMIT 20'))
+            rows = result.fetchall()
+            
+            if rows:
+                print()
+                print_info('Top 20 Hottest Cards (by price × volume):\n')
+                headers = ['Rank', 'Card Name', 'Avg $', 'Listings', 'Hotness']
+                table_rows = []
+                for idx, row in enumerate(rows, 1):
+                    table_rows.append([
+                        idx,
+                        row[0][:35],  # card_name
+                        f'${row[2]:.2f}',   # avg_price
+                        row[3],       # listing_count
+                        f'{row[11]:.0f}'    # hotness_score
+                    ])
+                print(tabulate(table_rows, headers=headers, tablefmt='grid'))
+            else:
+                print_info('No analytics data. Run dbt models first (option 7)!')
+                
+        elif choice == '4':
+            # Custom query
+            print()
+            print(Fore.CYAN + 'Available tables:')
+            print('  • stg_mtg_cards - Staging data')
+            print('  • dim_cards - Card dimension')
+            print('  • fct_card_prices - Price facts')
+            print('  • card_price_stats - Price statistics')
+            print('  • price_trends - Trends over time')
+            print('  • top_cards - Top cards')
+            print()
+            
+            query = input(Fore.GREEN + 'Enter SQL query: ' + Style.RESET_ALL).strip()
+            
+            if query:
+                result = session.execute(text(query))
+                rows = result.fetchall()
+                
+                if rows:
+                    print()
+                    print(tabulate(rows, tablefmt='grid'))
+                else:
+                    print_info('No results')
+        
+        session.close()
+        
+    except Exception as e:
+        print_error(f'Failed to query analytics: {str(e)}')
+        print()
+        print_info('Make sure you\'ve run dbt models first (option 7)')
+
+
+def generate_dbt_docs():
+    '''
+    Generate dbt documentation
+    '''
+    print(Fore.YELLOW + '\n━━━ GENERATE DBT DOCUMENTATION ━━━\n')
+    
+    print_info('Generating dbt documentation...')
+    print()
+    
+    try:
+        import subprocess
+        
+        env = os.environ.copy()
+        env['DBT_PROFILES_DIR'] = os.getcwd()
+        
+        # Generate docs
+        result = subprocess.run(
+            ['dbt', 'docs', 'generate', '--profiles-dir', '.'],
+            capture_output=True,
+            text=True,
+            env=env
+        )
+        
+        if result.returncode == 0:
+            print_success('Documentation generated!')
+            print()
+            
+            serve = input(Fore.CYAN + 'Start documentation server? [yes/no]: ' + Style.RESET_ALL).strip().lower()
+            
+            if serve == 'yes':
+                print()
+                print_info('Starting documentation server...')
+                print_info('Opening browser at http://localhost:8080')
+                print_info('Press Ctrl+C to stop the server')
+                print()
+                
+                subprocess.run(
+                    ['dbt', 'docs', 'serve', '--profiles-dir', '.', '--port', '8080'],
+                    env=env
+                )
+        else:
+            print_error('Failed to generate docs')
+            print(result.stderr)
+            
+    except KeyboardInterrupt:
+        print()
+        print_info('Documentation server stopped')
+    except Exception as e:
+        print_error(f'Failed to generate docs: {str(e)}')
+
+
 def clear_database():
     '''
     Clear all data from database
@@ -1373,16 +1664,24 @@ def interactive_menu():
         elif choice == '6':
             show_stats()
         elif choice == '7':
-            export_to_csv()
+            run_dbt_models()
         elif choice == '8':
-            upload_to_s3()
+            run_dbt_tests()
         elif choice == '9':
-            schedule_cron()
+            view_dbt_analytics()
         elif choice == '10':
-            remove_cron()
+            generate_dbt_docs()
         elif choice == '11':
-            configure_settings()
+            export_to_csv()
         elif choice == '12':
+            upload_to_s3()
+        elif choice == '13':
+            schedule_cron()
+        elif choice == '14':
+            remove_cron()
+        elif choice == '15':
+            configure_settings()
+        elif choice == '16':
             clear_database()
         elif choice == '0':
             print()
@@ -1390,7 +1689,7 @@ def interactive_menu():
             print()
             break
         else:
-            print_error('Invalid option! Please select 0-11.')
+            print_error('Invalid option! Please select 0-16.')
         
         input(Fore.CYAN + '\nPress Enter to continue...' + Style.RESET_ALL)
         print('\n' * 2)

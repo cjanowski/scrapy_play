@@ -1,0 +1,39 @@
+version: 2
+
+models:
+  - name: card_price_stats
+    description: "Aggregated price statistics by card"
+    columns:
+      - name: card_name
+        description: "Name of the MTG card"
+        tests:
+          - not_null
+      
+      - name: listing_count
+        description: "Number of listings found for this card"
+        tests:
+          - not_null
+      
+      - name: avg_price
+        description: "Average price across all listings"
+  
+  - name: price_trends
+    description: "Price trends over time by card and date"
+    columns:
+      - name: card_name
+        description: "Name of the MTG card"
+      
+      - name: scraped_date
+        description: "Date of scraping"
+      
+      - name: price_change_pct
+        description: "Percent change from previous day"
+  
+  - name: top_cards
+    description: "Top cards ranked by various metrics"
+    columns:
+      - name: card_name
+        description: "Name of the MTG card"
+      
+      - name: hotness_score
+        description: "Composite score based on price and volume"

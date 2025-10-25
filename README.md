@@ -27,6 +27,50 @@ A CLI tool for collecting Magic: The Gathering card prices. Features **eBay API 
 - **Beautiful CLI**: Colorful ASCII art with styled menus
 - **Debug Mode**: Auto-screenshots and visible browser option
 - **Configurable**: Easy configuration for CAPTCHA, proxies, and APIs
+- **dbt Analytics**: Transform and analyze scraped data with SQL models
+- **Data Quality Tests**: Automated testing for data integrity
+- **Interactive Analytics**: View price trends, statistics, and insights
+
+## 🆕 dbt Analytics Integration
+
+Transform your scraped data into actionable insights with built-in dbt (data build tool) support!
+
+### What You Get:
+
+- **Price Statistics**: Min/max/average prices, median, spreads by card
+- **Price Trends**: Track price changes over time
+- **Top Cards**: Ranked by price, volume, and "hotness" score
+- **Data Quality Tests**: Ensure your data is clean and accurate
+- **Interactive Documentation**: Auto-generated docs with data lineage
+
+### Quick Start:
+
+```bash
+# Install dbt
+./setup_dbt.sh
+
+# Or manually
+pip install dbt-core dbt-sqlite
+
+# Run dbt models (from main menu option 7)
+python mtgscraper.py
+→ Select option 7 (Run dbt Models)
+
+# View analytics (from main menu option 9)
+→ Select option 9 (View Analytics Results)
+```
+
+### Available Analytics Models:
+
+| Model | Description |
+|-------|-------------|
+| `card_price_stats` | Price statistics by card (min, max, avg, median, spread) |
+| `price_trends` | Daily price changes and trends over time |
+| `top_cards` | Top cards ranked by various metrics |
+| `dim_cards` | Card dimension table with latest info |
+| `fct_card_prices` | All price observations (fact table) |
+
+See [DBT_README.md](DBT_README.md) for detailed documentation.
 
 ## Demo Video
 
@@ -170,14 +214,32 @@ python mtgscraper.py
 ```
 
 The menu provides:
+
+**SCRAPING METHODS:**
 - **1. Playwright Scraper** - Browser automation (With adaptive structure analyzer)
 - **2. eBay API Search** - Official API
 - **3. Scrapy Spider** - Fast HTTP scraper (blocked by robots.txt)
+
+**VIEW & ANALYZE:**
 - **4. View Results** - Browse collected data in formatted tables
 - **5. View Card Details** - See detailed information for specific cards
 - **6. Database Statistics** - View stats about your collection
-- **7. Configure Settings** - Set up CAPTCHA, proxies, and API keys
-- **8. Clear Database** - Remove all data (with confirmation)
+
+**DBT ANALYTICS:**
+- **7. Run dbt Models** - Transform data into analytics tables
+- **8. Run dbt Tests** - Check data quality
+- **9. View Analytics Results** - See price trends and statistics
+- **10. Generate dbt Docs** - Create interactive documentation
+
+**EXPORT & AUTOMATE:**
+- **11. Export to CSV** - Save results to CSV file
+- **12. Upload to S3** - Upload data to AWS S3
+- **13. Schedule Cron Job** - Automate scraping
+- **14. Remove Cron Jobs** - Remove scheduled tasks
+
+**SETTINGS:**
+- **15. Configure Settings** - Set up CAPTCHA, proxies, and API keys
+- **16. Clear Database** - Remove all data (with confirmation)
 - **0. Exit** - Quit the program
 
 ### Direct Command Mode

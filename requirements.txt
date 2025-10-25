@@ -20,3 +20,7 @@ tensorflow>=2.13.0                # ML CAPTCHA solver (optional)
 opencv-python>=4.8.0              # Computer vision (optional)
 pillow>=10.0.0                    # Image processing (optional)
 boto3>=1.28.0                     # AWS S3 integration (optional)
+
+# dbt for data transformation and analytics
+dbt-core>=1.7.0                   # Core dbt functionality
+dbt-sqlite>=1.7.0                 # SQLite adapter for dbt

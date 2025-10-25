@@ -1,0 +1,30 @@
+version: 2
+
+models:
+  - name: stg_mtg_cards
+    description: "Staging model for MTG card data with cleaned and standardized fields"
+    columns:
+      - name: id
+        description: "Primary key from source database"
+        tests:
+          - unique
+          - not_null
+      
+      - name: card_name
+        description: "Name of the MTG card"
+        tests:
+          - not_null
+      
+      - name: price_numeric
+        description: "Numeric price value extracted from price string"
+        tests:
+          - not_null
+      
+      - name: scraped_at
+        description: "Timestamp when the card was scraped"
+        tests:
+          - not_null
+      
+      - name: source
+        description: "Source of the data (eBay API, Playwright, etc.)"
+

@@ -1,0 +1,19 @@
+# dbt packages
+# Uncomment packages you want to use and run: dbt deps --profiles-dir .
+
+packages: []
+
+# Useful macros and tests
+# - package: dbt-labs/dbt_utils
+#   version: 1.1.1
+
+# Codegen - generate model boilerplate
+# - package: dbt-labs/codegen
+#   version: 0.11.0
+
+# Great Expectations - advanced data quality tests
+# - package: calogica/dbt_expectations
+#   version: 0.10.0
+
+# After uncommenting packages, run:
+# dbt deps --profiles-dir .

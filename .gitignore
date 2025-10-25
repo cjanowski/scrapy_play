@@ -62,3 +62,9 @@ htmlcov/
 
 # Environment variables
 .env
+
+# dbt
+target/
+dbt_packages/
+logs/
+dbt_cron.log

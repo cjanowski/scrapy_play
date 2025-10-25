@@ -1,0 +1,34 @@
+version: 2
+
+models:
+  - name: dim_cards
+    description: "Dimension table containing unique cards with their latest information"
+    columns:
+      - name: card_key
+        description: "Surrogate key for the card dimension"
+        tests:
+          - unique
+          - not_null
+      
+      - name: card_name
+        description: "Name of the MTG card"
+        tests:
+          - not_null
+      
+      - name: set_name
+        description: "MTG set name"
+  
+  - name: fct_card_prices
+    description: "Fact table containing all card price observations"
+    columns:
+      - name: price_id
+        description: "Unique identifier for each price observation"
+        tests:
+          - unique
+          - not_null
+      
+      - name: price_numeric
+        description: "Numeric price value"
+        tests:
+          - not_null
+
