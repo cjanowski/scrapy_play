@@ -45,4 +45,3 @@ echo "To use the scraper, run:"
 echo "  source venv/bin/activate"
 echo "  python mtgscraper.py scrape --card \"Black Lotus\""
 echo ""
-

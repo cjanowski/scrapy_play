@@ -73,4 +73,3 @@ class MtgScraperPipeline:
         self.session.add(card)
         
         return item
-

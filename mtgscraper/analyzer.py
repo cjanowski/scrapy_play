@@ -179,4 +179,3 @@ class PageStructureAnalyzer:
         Get the discovered selectors
         '''
         return self.discovered_selectors
-

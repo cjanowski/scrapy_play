@@ -251,4 +251,3 @@ class ProxyMiddleware:
             request.meta['proxy'] = proxy
             self.current_proxy_index = (self.current_proxy_index + 1) % len(self.proxies)
             spider.logger.debug(f'Using proxy: {proxy}')
-

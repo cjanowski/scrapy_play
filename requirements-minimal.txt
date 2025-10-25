@@ -10,4 +10,3 @@ sqlalchemy>=2.0.23
 pyfiglet>=1.0.2
 Twisted>=24.0.0
 requests>=2.31.0
-

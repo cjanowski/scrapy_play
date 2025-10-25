@@ -15,4 +15,3 @@ class MtgCardItem(scrapy.Item):
     timestamp = scrapy.Field()
     shipping = scrapy.Field()
     buy_it_now = scrapy.Field()
-

@@ -123,4 +123,3 @@ class EbayMtgSpider(scrapy.Spider):
             if next_page:
                 self.logger.info(f"Following pagination: Page {self.page_count + 1}")
                 yield response.follow(next_page, callback=self.parse)
-
