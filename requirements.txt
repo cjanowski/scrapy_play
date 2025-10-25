@@ -12,11 +12,11 @@ requests>=2.31.0
 # Optional dependencies for advanced features
 # Install with: pip install -r requirements.txt
 scrapy-playwright>=0.0.34         # Playwright integration (recommended for JS sites)
-playwright>=1.40.0                # Browser automation (more realistic scraping)
+playwright>=1.40.0                # Browser automation
 scrapy-splash>=0.9.0              # Alternative: Splash for JS rendering
 scrapy-rotating-proxies>=0.6.2    # Proxy rotation (optional)
 2captcha-python>=1.2.0            # Commercial CAPTCHA solver (optional)
-tensorflow>=2.13.0                # ML CAPTCHA solver (optional, large download)
+tensorflow>=2.13.0                # ML CAPTCHA solver (optional)
 opencv-python>=4.8.0              # Computer vision (optional)
 pillow>=10.0.0                    # Image processing (optional)
 boto3>=1.28.0                     # AWS S3 integration (optional)

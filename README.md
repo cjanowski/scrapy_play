@@ -1,15 +1,15 @@
-# MTG Scraper 🃏
+# MTG Scraper
 
 A professional-grade CLI tool for collecting Magic: The Gathering card prices. Features **eBay API integration**, **advanced web scraping** with CAPTCHA solving and proxy rotation, and a beautiful interactive menu interface.
 
-**Recommended:** Use **Playwright (option 1)** for scraping that works, with adaptive structure analysis.
+**Recommended:** Use **Playwright (option 1)** for scraping, with adaptive structure analysis.
 ```
-    __  _____________   _____                                
-   /  |/  /_  __/ __ \ / ___/______________ _____  ___  _____
-  / /|_/ / / / / / / / \__ \/ ___/ ___/ __ `/ __ \/ _ \/ ___/
- / /  / / / / / /_/ / ___/ / /__/ /  / /_/ / /_/ /  __/ /    
-/_/  /_/ /_/  \____/ /____/\___/_/   \__,_/ .___/\___/_/     
-                                         /_/                 
+    __  _______________   _____                                
+   /  |/  /_  __/ ____/  / ___/______________ _____  ___  _____
+  / /|_/ / / / / / __    \__ \/ ___/ ___/ __ `/ __ \/ _ \/ ___/
+ / /  / / / / / /_/ /   ___/ / /__/ /  / /_/ / /_/ /  __/ /    
+/_/  /_/ /_/  \____/   /____/\___/_/   \__,_/ .___/\___/_/     
+                                           /_/                 
 ```
 
 ## Features
@@ -475,4 +475,3 @@ This scraper includes production-ready features:
 - [ ] Distributed crawling with Scrapy Cloud
 - [ ] Redis-based task queue
 - [ ] Monitoring and alerting (Prometheus/Grafana)
-

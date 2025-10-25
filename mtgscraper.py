@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+
 '''
 MTG Scraper - CLI tool for scraping Magic: The Gathering card prices
 '''
