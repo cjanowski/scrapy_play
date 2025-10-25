@@ -14,8 +14,8 @@ A professional-grade CLI tool for collecting Magic: The Gathering card prices. F
 
 ## Features
 
-- **Interactive Menu**: Beautiful, easy-to-use menu interface
-- **Playwright Integration**: Browser automation that works on eBay!
+- **Interactive Menu**: Easy-to-use menu interface
+- **Playwright Integration**: Browser automation for eBay!
 - **Adaptive Analyzer**: Auto-discovers page structure & selectors
 - **Flexible Search**: Search by card name, set, type, or custom query
 - **API Integration**: eBay Finding API support (official)
@@ -51,7 +51,6 @@ A professional-grade CLI tool for collecting Magic: The Gathering card prices. F
 - **Traditional HTTP Scraping**
   - Very fast (no browser overhead)
   - Production features: CAPTCHA solving, proxies, AutoThrottle
-  - Demonstrates ethical scraping & Scrapy expertise
 
 **Recommendation:** Use Playwright (option 1) for actual scraping, or API (option 2) for production.
   
