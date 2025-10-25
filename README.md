@@ -1,6 +1,6 @@
 # MTG Scraper
 
-A professional-grade CLI tool for collecting Magic: The Gathering card prices. Features **eBay API integration**, **advanced web scraping** with CAPTCHA solving and proxy rotation, and a beautiful interactive menu interface.
+A CLI tool for collecting Magic: The Gathering card prices. Features **eBay API integration**, **advanced web scraping** with CAPTCHA solving and proxy rotation, and a beautiful interactive menu interface.
 
 **Recommended:** Use **Playwright (option 1)** for scraping, with adaptive structure analysis.
 ```
@@ -27,7 +27,6 @@ A professional-grade CLI tool for collecting Magic: The Gathering card prices. F
 - **Beautiful CLI**: Colorful ASCII art with styled menus
 - **Debug Mode**: Auto-screenshots and visible browser option
 - **Configurable**: Easy configuration for CAPTCHA, proxies, and APIs
-
 
 ## Usage Images
 <img width="1512" height="982" alt="Screenshot 2025-10-24 at 9 01 35 PM" src="https://github.com/user-attachments/assets/a963f5be-5de0-47b6-8d4a-db41cf29b435" />

@@ -370,6 +370,9 @@ def playwright_scraper():
     limit = input(Fore.CYAN + '\nMax results [20]: ' + Style.RESET_ALL).strip()
     limit = int(limit) if limit.isdigit() else 20
     
+    max_pages = input(Fore.CYAN + 'Max pages to scrape [5]: ' + Style.RESET_ALL).strip()
+    max_pages = int(max_pages) if max_pages.isdigit() else 5
+    
     headless_choice = input(Fore.CYAN + 'Run in background (headless)? [yes/no]: ' + Style.RESET_ALL).strip().lower()
     headless = headless_choice != 'no'
     
@@ -385,6 +388,8 @@ def playwright_scraper():
         '5': 'Most Bids'
     }
     print_info(f'Sort order: {Fore.YELLOW}{sort_names.get(sort_choice, "Best Match")}')
+    print_info(f'Max pages: {Fore.YELLOW}{max_pages}')
+    print_info(f'Max results per page: {Fore.YELLOW}{limit}')
     
     if headless:
         print_info('Running in headless mode (background)')
@@ -421,133 +426,161 @@ def playwright_scraper():
             search_url = f'https://www.ebay.com/sch/i.html?_nkw=mtg+{card.replace(" ", "+")}&LH_BIN=1{sort_param}'
             print_info(f'Navigating to eBay...')
             
-            try:
-                page.goto(search_url, wait_until='domcontentloaded', timeout=30000)
-                
-                # Wait a bit for dynamic content
-                page.wait_for_timeout(3000)
-                
-                # Analyze page structure first
-                print_info('Running structure analyzer...')
-                analyzer = PageStructureAnalyzer(page)
-                selectors = analyzer.analyze()
-                
-                print()
-                
-                # Use discovered selectors
-                listings = page.query_selector_all(selectors.get('container', '.s-item'))
-                
-                if not listings:
-                    # Take screenshot for debugging
-                    page.screenshot(path='ebay_debug.png')
-                    
-                    # Also save HTML for inspection
-                    with open('ebay_debug.html', 'w', encoding='utf-8') as f:
-                        f.write(page.content())
-                    
-                    print_error('Could not find listings on page')
-                    print_info('Debug files saved:')
-                    print(Fore.CYAN + '   • ebay_debug.png (screenshot)')
-                    print(Fore.CYAN + '   • ebay_debug.html (page source)')
-                    print()
-                    print(Fore.YELLOW + 'eBay may have changed their HTML structure or is blocking')
-                    browser.close()
-                    return
-                    
-            except Exception as e:
-                print_error(f'Page load error: {str(e)}')
-                browser.close()
-                return
+            # Pagination loop
+            current_page = 1
+            selectors = None
             
-            # Extract listings using JavaScript (more reliable)
-            print_info(f'Found {len(listings)} listings, extracting data...')
-            
-            # Use JavaScript to extract data directly with discovered selectors
-            results_js = page.evaluate('''
-                (selectors) => {
-                    const items = [];
-                    const containerSelector = selectors.container || '.s-item';
-                    const titleSelector = selectors.title || '.s-item__title';
-                    const priceSelector = selectors.price || '.s-item__price';
+            while current_page <= max_pages and len(results) < limit * max_pages:
+                try:
+                    # Navigate to page
+                    if current_page == 1:
+                        page_url = search_url
+                    else:
+                        page_url = f'{search_url}&_pgn={current_page}'
                     
-                    const listings = document.querySelectorAll(containerSelector + ', .s-item, li.s-item, [class*="s-item"]');
+                    print_info(f'Scraping page {current_page}...')
+                    page.goto(page_url, wait_until='domcontentloaded', timeout=30000)
                     
-                    listings.forEach((listing, index) => {
-                        try {
-                            // Get title using discovered selector
-                            const titleEl = listing.querySelector(titleSelector + ', .s-item__title span, .s-item__title, h3');
-                            const title = titleEl ? titleEl.textContent.trim() : null;
+                    # Wait a bit for dynamic content
+                    page.wait_for_timeout(3000)
+                    
+                    # Analyze page structure on first page
+                    if current_page == 1:
+                        print_info('Running structure analyzer...')
+                        analyzer = PageStructureAnalyzer(page)
+                        selectors = analyzer.analyze()
+                        print()
+                    
+                    # Use discovered selectors
+                    listings = page.query_selector_all(selectors.get('container', '.s-item'))
+                    
+                    if not listings:
+                        # Take screenshot for debugging
+                        page.screenshot(path='ebay_debug.png')
+                        
+                        # Also save HTML for inspection
+                        with open('ebay_debug.html', 'w', encoding='utf-8') as f:
+                            f.write(page.content())
+                        
+                        print_error('Could not find listings on page')
+                        print_info('Debug files saved:')
+                        print(Fore.CYAN + '   • ebay_debug.png (screenshot)')
+                        print(Fore.CYAN + '   • ebay_debug.html (page source)')
+                        print()
+                        print(Fore.YELLOW + 'eBay may have changed their HTML structure or is blocking')
+                        break
+                    
+                    # Extract listings using JavaScript (more reliable)
+                    print_info(f'Found {len(listings)} listings, extracting data...')
+                    
+                    # Use JavaScript to extract data directly with discovered selectors
+                    results_js = page.evaluate('''
+                        (selectors) => {
+                            const items = [];
+                            const containerSelector = selectors.container || '.s-item';
+                            const titleSelector = selectors.title || '.s-item__title';
+                            const priceSelector = selectors.price || '.s-item__price';
                             
-                            // Get price using discovered selector
-                            const priceEl = listing.querySelector(priceSelector + ', .s-item__price, span.s-item__price');
-                            const price = priceEl ? priceEl.textContent.trim() : null;
+                            const listings = document.querySelectorAll(containerSelector + ', .s-item, li.s-item, [class*="s-item"]');
                             
-                            // Get bid count
-                            const bidEl = listing.querySelector('.s-item__bids, .s-item__bidCount, [class*="bid"]');
-                            const bids = bidEl ? bidEl.textContent.trim() : '0 bids';
+                            listings.forEach((listing, index) => {
+                                try {
+                                    // Get title using discovered selector
+                                    const titleEl = listing.querySelector(titleSelector + ', .s-item__title span, .s-item__title, h3');
+                                    const title = titleEl ? titleEl.textContent.trim() : null;
+                                    
+                                    // Get price using discovered selector
+                                    const priceEl = listing.querySelector(priceSelector + ', .s-item__price, span.s-item__price');
+                                    const price = priceEl ? priceEl.textContent.trim() : null;
+                                    
+                                    // Get bid count
+                                    const bidEl = listing.querySelector('.s-item__bids, .s-item__bidCount, [class*="bid"]');
+                                    const bids = bidEl ? bidEl.textContent.trim() : '0 bids';
+                                    
+                                    // Get shipping info
+                                    const shippingEl = listing.querySelector('.s-item__shipping, .s-item__freeXDays, [class*="shipping"]');
+                                    const shipping = shippingEl ? shippingEl.textContent.trim() : 'See listing';
+                                    
+                                    // Get URL
+                                    const linkEl = listing.querySelector('a.s-item__link, a[href*="/itm/"]');
+                                    const url = linkEl ? linkEl.href : '';
+                                    
+                                    // Only include if we have title and price
+                                    if (title && price && title.toLowerCase() !== 'shop on ebay' && price.includes('$')) {
+                                        items.push({
+                                            title: title,
+                                            price: price,
+                                            bids: bids,
+                                            shipping: shipping,
+                                            url: url
+                                        });
+                                    }
+                                } catch (e) {
+                                    // Skip items that fail
+                                }
+                            });
                             
-                            // Get shipping info
-                            const shippingEl = listing.querySelector('.s-item__shipping, .s-item__freeXDays, [class*="shipping"]');
-                            const shipping = shippingEl ? shippingEl.textContent.trim() : 'See listing';
-                            
-                            // Get URL
-                            const linkEl = listing.querySelector('a.s-item__link, a[href*="/itm/"]');
-                            const url = linkEl ? linkEl.href : '';
-                            
-                            // Only include if we have title and price
-                            if (title && price && title.toLowerCase() !== 'shop on ebay' && price.includes('$')) {
-                                items.push({
-                                    title: title,
-                                    price: price,
-                                    bids: bids,
-                                    shipping: shipping,
-                                    url: url
-                                });
-                            }
-                        } catch (e) {
-                            // Skip items that fail
+                            return items;
                         }
-                    });
+                    ''', selectors)
                     
-                    return items;
-                }
-            ''', selectors)
-            
-            # Convert JavaScript results to Python
-            print_info(f'JavaScript extracted {len(results_js)} items')
-            
-            processed = 0
-            for item in results_js[:limit]:
-                # Extract bid count for display
-                bid_info = item.get('bids', '0 bids')
-                has_bids = 'bid' in bid_info.lower() and bid_info.strip() != '0 bids'
-                
-                results.append({
-                    'card_name': item['title'],
-                    'price': item['price'],
-                    'url': item['url'],
-                    'source': 'eBay (Playwright)',
-                    'timestamp': datetime.now().isoformat(),
-                    'condition': bid_info if has_bids else 'Buy It Now',
-                    'shipping': item.get('shipping', 'See listing'),
-                    'buy_it_now': not has_bids,
-                    'seller': 'eBay Seller',
-                    'set_name': 'Unknown'
-                })
-                
-                # Display with bid info
-                bid_display = f' | {Fore.YELLOW}{bid_info}{Style.RESET_ALL}' if has_bids else ''
-                price_display = f' | {Fore.GREEN}{item["price"]}{Style.RESET_ALL}'
-                print(f'   {Fore.GREEN}✓{Style.RESET_ALL} {item["title"][:45]}{price_display}{bid_display}')
-                processed += 1
-            
-            # Save debug files if no results
-            if not results:
-                page.screenshot(path='ebay_debug.png')
-                with open('ebay_debug.html', 'w', encoding='utf-8') as f:
-                    f.write(page.content())
-                print()
-                print_info('Debug files saved for inspection')
+                    # Convert JavaScript results to Python
+                    print_info(f'JavaScript extracted {len(results_js)} items from page {current_page}')
+                    
+                    page_results = 0
+                    for item in results_js:
+                        if len(results) >= limit * max_pages:
+                            break
+                            
+                        # Extract bid count for display
+                        bid_info = item.get('bids', '0 bids')
+                        has_bids = 'bid' in bid_info.lower() and bid_info.strip() != '0 bids'
+                        
+                        results.append({
+                            'card_name': item['title'],
+                            'price': item['price'],
+                            'url': item['url'],
+                            'source': 'eBay (Playwright)',
+                            'timestamp': datetime.now().isoformat(),
+                            'condition': bid_info if has_bids else 'Buy It Now',
+                            'shipping': item.get('shipping', 'See listing'),
+                            'buy_it_now': not has_bids,
+                            'seller': 'eBay Seller',
+                            'set_name': 'Unknown'
+                        })
+                        
+                        # Display with bid info
+                        bid_display = f' | {Fore.YELLOW}{bid_info}{Style.RESET_ALL}' if has_bids else ''
+                        price_display = f' | {Fore.GREEN}{item["price"]}{Style.RESET_ALL}'
+                        print(f'   {Fore.GREEN}✓{Style.RESET_ALL} {item["title"][:45]}{price_display}{bid_display}')
+                        page_results += 1
+                    
+                    print_info(f'Collected {page_results} items from page {current_page}. Total so far: {len(results)}')
+                    print()
+                    
+                    # Check if there's a next page
+                    if current_page >= max_pages:
+                        print_info(f'Reached max pages limit ({max_pages})')
+                        break
+                    
+                    # Check for next page button
+                    next_button = page.query_selector('a.pagination__next, nav.pagination a[aria-label="Next page"]')
+                    if not next_button:
+                        print_info('No more pages available')
+                        break
+                    
+                    current_page += 1
+                    
+                except Exception as e:
+                    print_error(f'Error on page {current_page}: {str(e)}')
+                    # Save debug files if no results
+                    if not results:
+                        page.screenshot(path='ebay_debug.png')
+                        with open('ebay_debug.html', 'w', encoding='utf-8') as f:
+                            f.write(page.content())
+                        print()
+                        print_info('Debug files saved for inspection')
+                    break
             
             browser.close()
         
