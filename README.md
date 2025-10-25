@@ -2,7 +2,7 @@
 
 A professional-grade CLI tool for collecting Magic: The Gathering card prices. Features **eBay API integration** (recommended), **advanced web scraping** with CAPTCHA solving and proxy rotation, and a beautiful interactive menu interface.
 
-**💡 Recommended:** Use **Playwright (option 1)** for scraping that works, with adaptive structure analysis. For production systems, use the **eBay API (option 2)** for legal, reliable data. Scrapy (option 3) demonstrates ethical scraping but is blocked by robots.txt.
+**Recommended:** Use **Playwright (option 1)** for scraping that works, with adaptive structure analysis. For production systems, use the **eBay API (option 2)** for legal, reliable data. Scrapy (option 3) demonstrates ethical scraping but is blocked by robots.txt.
 
 ```
     __  _____________   _____                                
@@ -15,51 +15,48 @@ A professional-grade CLI tool for collecting Magic: The Gathering card prices. F
 
 ## Features
 
-- 🎮 **Interactive Menu**: Beautiful, easy-to-use menu interface
-- 🌐 **Playwright Integration**: Browser automation that works on eBay!
-- 🤖 **Adaptive Analyzer**: Auto-discovers page structure & selectors
-- 🔍 **Flexible Search**: Search by card name, set, type, or custom query
-- 🎯 **API Integration**: eBay Finding API support (official, legal)
-- 🕷️ **Scrapy Framework**: Production-grade spider with advanced features
-- 🔐 **CAPTCHA Solving**: Dual-mode (2Captcha API + local ML with TensorFlow)
-- 🌍 **Proxy Rotation**: Built-in middleware for rotating IP addresses
-- 🗄️ **Database Storage**: SQLite integration with SQLAlchemy ORM
-- 📊 **Data Visualization**: Beautiful formatted tables with filtering
-- 🎨 **Beautiful CLI**: Colorful ASCII art with styled menus
-- 📸 **Debug Mode**: Auto-screenshots and visible browser option
-- 🔧 **Configurable**: Easy configuration for CAPTCHA, proxies, and APIs
+- **Interactive Menu**: Beautiful, easy-to-use menu interface
+- **Playwright Integration**: Browser automation that works on eBay!
+- **Adaptive Analyzer**: Auto-discovers page structure & selectors
+- **Flexible Search**: Search by card name, set, type, or custom query
+- **API Integration**: eBay Finding API support (official)
+- **Scrapy Framework**: Production-grade spider with advanced features
+- **CAPTCHA Solving**: Dual-mode (2Captcha API + local ML with TensorFlow)
+- **Proxy Rotation**: Built-in middleware for rotating IP addresses
+- **Database Storage**: SQLite integration with SQLAlchemy ORM
+- **Data Visualization**: Beautiful formatted tables with filtering
+- **Beautiful CLI**: Colorful ASCII art with styled menus
+- **Debug Mode**: Auto-screenshots and visible browser option
+- **Configurable**: Easy configuration for CAPTCHA, proxies, and APIs
 
 ## Data Collection Methods
 
-### 1️⃣ Playwright (Default - Works!)
+### Playwright (Default)
 - **Browser Automation** with real Chrome
-  - ✅ **Actually gets results from eBay**
-  - 🤖 Adaptive structure analyzer (auto-discovers selectors)
-  - ✅ Bypasses robots.txt (acts like real user)
-  - ✅ Handles JavaScript automatically  
-  - ✅ Stealth mode - harder to detect
-  - 🎥 Can run in visible mode to watch it work
-  - 📸 Auto-screenshots for debugging
-  - 🔍 **Multiple search types:** Card name, set, type, custom
+  - Adaptive structure analyzer (auto-discovers selectors)
+  - Bypasses robots.txt (acts like real user)
+  - Handles JavaScript automatically  
+  - Stealth mode - harder to detect
+  - Can run in visible mode to watch it work
+  - Auto-screenshots for debugging
+  - **Multiple search types:** Card name, set, type, custom
   - Slower but more effective than Scrapy
 
-### 2️⃣ Official API (Best for Production)
+### Official API
 - **eBay Finding API**
   - Free API key from [eBay Developers Program](https://developer.ebay.com/)
   - No blocking, clean JSON responses
-  - **The legal & professional approach**
-  - 🔍 **Multiple search types:** Card name, set, type, custom
+  - **Multiple search types:** Card name, set, type, custom
 
-### 3️⃣ Scrapy Spider (Educational)
+### Scrapy Spider
 - **Traditional HTTP Scraping**
-  - ⚡ Very fast (no browser overhead)
-  - 🔧 Production features: CAPTCHA solving, proxies, AutoThrottle
-  - ❌ Blocked by eBay's robots.txt (returns 0 results)
-  - 📚 Demonstrates ethical scraping & Scrapy expertise
+  - Very fast (no browser overhead)
+  - Production features: CAPTCHA solving, proxies, AutoThrottle
+  - Demonstrates ethical scraping & Scrapy expertise
 
 **Recommendation:** Use Playwright (option 1) for actual scraping, or API (option 2) for production.
   
-### 🚧 Future Sources
+### Future Sources
 - TCGPlayer API
 - CardKingdom integration
 - StarCityGames
@@ -166,18 +163,13 @@ python mtgscraper.py
 The menu provides:
 - **1. Playwright Scraper** - Browser automation (With adaptive structure analyzer)
 - **2. eBay API Search** - Official API
-- **3. Scrapy Spider** - Fast HTTP scraper (demonstrates Scrapy expertise, blocked by robots.txt)
+- **3. Scrapy Spider** - Fast HTTP scraper (blocked by robots.txt)
 - **4. View Results** - Browse collected data in formatted tables
 - **5. View Card Details** - See detailed information for specific cards
 - **6. Database Statistics** - View stats about your collection
 - **7. Configure Settings** - Set up CAPTCHA, proxies, and API keys
 - **8. Clear Database** - Remove all data (with confirmation)
 - **0. Exit** - Quit the program
-
-**🎯 Which to Use:**
-- **Default/Works:** Option 1 (Playwright - gets real data!)
-- **Production/Legal:** Option 2 (eBay API)
-- **Learning Scrapy:** Option 3 (Scrapy)
 
 ### Direct Command Mode
 
@@ -225,7 +217,7 @@ python mtgscraper.py -c "Lightning Bolt" -p 3
    # Enter your search query
    # Choose headless or visible mode
    # Watch the adaptive analyzer discover page structure!
-   # Get actual eBay results! 🎉
+   # Get actual eBay results!
    ```
 
 **Search Examples:**
@@ -312,7 +304,6 @@ scraperTool/
 - **Click**: Command-line interface creation framework
 - **Colorama**: Cross-platform colored terminal text
 - **Tabulate**: Pretty-print tabular data
-- **PyFiglet**: ASCII art text generation
 - **BeautifulSoup4**: HTML parsing library
 - **2Captcha-Python**: Commercial CAPTCHA solving API client
 - **TensorFlow**: ML framework for local CAPTCHA solving (optional)
@@ -339,8 +330,6 @@ The SQLite database (`mtg_cards.db`) contains a single table with the following 
 
 ### Scrapy Configuration
 
-The scraper is configured with **ethical best practices**:
-
 - **User Agent**: Modern Chrome browser user agent (looks like real user)
 - **Download Delay**: 2 seconds between requests (randomized)
 - **AutoThrottle**: Automatically adjusts speed based on server load
@@ -353,8 +342,6 @@ The scraper is configured with **ethical best practices**:
 - Mimics human browsing behavior
 - Reduces server load
 - Less likely to be blocked
-- Ethical and professional approach
-- Shows understanding of web scraping best practices
 
 These settings can be customized in `mtgscraper/settings.py`.
 
@@ -401,9 +388,7 @@ print(tabulate(rows, headers=headers, tablefmt='fancy_grid'))
 # Other formats: 'grid', 'simple', 'plain', 'html', 'latex', etc.
 ```
 
-## Best Practices & Ethical Scraping
-
-This tool is built with ethical scraping principles in mind:
+## Best Practices
 
 ### 🤖 "Good Bot" Behavior
 - **Respect robots.txt**: Always obey website rules (ROBOTSTXT_OBEY = True)
@@ -411,21 +396,6 @@ This tool is built with ethical scraping principles in mind:
 - **Control crawl rate**: AutoThrottle adjusts speed based on server capacity
 - **Limit concurrency**: Only 2 requests per domain at a time
 - **Randomized delays**: Mimic human browsing patterns
-
-### 📋 Interview Talking Points
-When discussing this project in interviews, emphasize:
-
-1. **Production-Ready**: "This isn't a toy project - it includes CAPTCHA solving, proxy rotation, and API integration that production systems actually use."
-
-2. **API-First Philosophy**: "I implemented eBay's official API as the primary method because it's legal, reliable, and provides structured data. The scraper is for when APIs aren't available."
-
-3. **Multiple Scraping Approaches**: "I implemented three methods: eBay API for production, Playwright for browser automation that bypasses bot detection, and Scrapy for high-performance HTTP scraping with custom middleware. I understand the trade-offs: Playwright is slower but more effective, Scrapy is faster but easier to block."
-
-4. **Ethical & Legal**: "I respect robots.txt, use AutoThrottle to adapt to server load, and prefer APIs over scraping. This shows professional judgment."
-
-5. **Full-Stack Skills**: "This demonstrates REST APIs, web scraping, middleware development, database design, CLI interfaces, and third-party service integration."
-
-6. **Real-World Challenges**: "I understand anti-bot measures and have solutions: CAPTCHA solvers, proxies, rate limiting. Not just the theory - actual implementations."
 
 ### 🚀 Production Features (Already Implemented!)
 This scraper includes production-ready features:
@@ -449,22 +419,14 @@ This scraper includes production-ready features:
 
 **eBay Scraping Blocked / robots.txt**
 - **This is expected!** eBay blocks scraping via robots.txt
-- **Why?** Because they provide an official API (the correct approach)
-- **Solution**: Use **option 1 (eBay API)** for legal, reliable data access
-- **Interview Context**: This demonstrates:
-  - Respecting robots.txt (ROBOTSTXT_OBEY = True)
-  - Understanding when to use APIs vs. scraping
-  - Legal and ethical data collection practices
-  - Professional judgment in choosing data sources
-- **The scraper respects robots.txt** - showing ethical development practices
-
+- **Solution**: Use **option 1 (eBay API)**
+- 
 **CAPTCHA Challenges**
 - **Option 1 (Recommended):** Use 2Captcha API (~$3 per 1000 solves)
   - `export CAPTCHA_API_KEY="your-key"`
 - **Option 2 (Free):** Enable local ML solver (experimental)
   - `export USE_LOCAL_CAPTCHA=true`
   - Uses TensorFlow + OpenCV
-  - Less reliable than paid service but free
 - The middleware automatically tries both methods with fallback
 
 **Import Error: No module named 'mtgscraper'**
@@ -514,16 +476,4 @@ This scraper includes production-ready features:
 - [ ] Distributed crawling with Scrapy Cloud
 - [ ] Redis-based task queue
 - [ ] Monitoring and alerting (Prometheus/Grafana)
-
-## License
-
-This project is provided as-is for educational and portfolio purposes.
-
-## Contributing
-
-This is a portfolio project, but suggestions and improvements are welcome!
-
----
-
-**Note**: This tool is designed for educational purposes and personal use. Always respect website terms of service and robots.txt files when scraping. Be responsible and ethical in your data collection practices.
 
