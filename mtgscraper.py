@@ -51,23 +51,60 @@ def print_info(message):
     print(Fore.CYAN + f'ℹ {message}')
 
 
+def strip_ansi(text):
+    '''
+    Remove ANSI color codes from text for length calculation
+    '''
+    import re
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    return ansi_escape.sub('', text)
+
+
+def format_menu_line(content, width=54):
+    '''
+    Format a menu line with proper padding
+    content: the colored text content
+    width: total width of the content area (default 54 for the box)
+    '''
+    # Calculate actual visible length without ANSI codes
+    visible_length = len(strip_ansi(content))
+    padding = ' ' * (width - visible_length)
+    return Fore.MAGENTA + '║' + content + padding + Fore.MAGENTA + '║'
+
+
 def print_menu():
     '''
     Display main menu
     '''
-    print(Fore.CYAN + '┌─────────────────────────────────────────────────────────┐')
-    print(Fore.CYAN + '│' + Fore.YELLOW + '                      MAIN MENU                          ' + Fore.CYAN + '│')
-    print(Fore.CYAN + '├─────────────────────────────────────────────────────────┤')
-    print(Fore.CYAN + '│  ' + Fore.GREEN + '1.' + Fore.WHITE + ' Playwright Scraper (Recommended - Works!)           ' + Fore.CYAN + '│')
-    print(Fore.CYAN + '│  ' + Fore.GREEN + '2.' + Fore.WHITE + ' eBay API Search (Legal & Professional)              ' + Fore.CYAN + '│')
-    print(Fore.CYAN + '│  ' + Fore.GREEN + '3.' + Fore.WHITE + ' Scrapy Spider (Fast, Ethical, Blocked)              ' + Fore.CYAN + '│')
-    print(Fore.CYAN + '│  ' + Fore.GREEN + '4.' + Fore.WHITE + ' View Results                                        ' + Fore.CYAN + '│')
-    print(Fore.CYAN + '│  ' + Fore.GREEN + '5.' + Fore.WHITE + ' View Card Details                                   ' + Fore.CYAN + '│')
-    print(Fore.CYAN + '│  ' + Fore.GREEN + '6.' + Fore.WHITE + ' Database Statistics                                 ' + Fore.CYAN + '│')
-    print(Fore.CYAN + '│  ' + Fore.GREEN + '7.' + Fore.WHITE + ' Configure Settings                                  ' + Fore.CYAN + '│')
-    print(Fore.CYAN + '│  ' + Fore.GREEN + '8.' + Fore.WHITE + ' Clear Database                                      ' + Fore.CYAN + '│')
-    print(Fore.CYAN + '│  ' + Fore.GREEN + '0.' + Fore.WHITE + ' Exit                                                ' + Fore.CYAN + '│')
-    print(Fore.CYAN + '└─────────────────────────────────────────────────────────┘')
+    print(Fore.MAGENTA + '╔══════════════════════════════════════════════════════╗')
+    print(format_menu_line(Fore.CYAN + Style.BRIGHT + 'MAIN MENU'.center(54) + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╠══════════════════════════════════════════════════════╣')
+    print(format_menu_line('  ' + Fore.GREEN + Style.BRIGHT + 'SCRAPING METHODS' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
+    print(format_menu_line('  ' + Fore.YELLOW + '1.  ' + Fore.WHITE + 'Playwright Scraper ' + Fore.GREEN + Style.BRIGHT + '(Recommended)' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '2.  ' + Fore.WHITE + 'eBay API Search ' + Fore.CYAN + '(API key required)' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '3.  ' + Fore.WHITE + 'Scrapy Spider ' + Fore.RED + '(Advanced setup)' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
+    print(format_menu_line('  ' + Fore.BLUE + Style.BRIGHT + 'VIEW & ANALYZE' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
+    print(format_menu_line('  ' + Fore.YELLOW + '4.  ' + Fore.WHITE + 'View Results' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '5.  ' + Fore.WHITE + 'View Card Details' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '6.  ' + Fore.WHITE + 'Database Statistics' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
+    print(format_menu_line('  ' + Fore.CYAN + Style.BRIGHT + 'EXPORT & AUTOMATE' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
+    print(format_menu_line('  ' + Fore.YELLOW + '7.  ' + Fore.WHITE + 'Export to CSV' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '8.  ' + Fore.WHITE + 'Upload to S3' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '9.  ' + Fore.WHITE + 'Schedule Cron Job' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '10. ' + Fore.WHITE + 'Remove Cron Jobs' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
+    print(format_menu_line('  ' + Fore.YELLOW + Style.BRIGHT + 'SETTINGS' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
+    print(format_menu_line('  ' + Fore.YELLOW + '11. ' + Fore.WHITE + 'Configure Settings' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '12. ' + Fore.WHITE + 'Clear Database ' + Fore.RED + '(Warning!)' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
+    print(format_menu_line('  ' + Fore.RED + '0.  ' + Fore.WHITE + 'Exit' + Style.RESET_ALL))
+    print(Fore.MAGENTA + '╚══════════════════════════════════════════════════════╝')
     print()
 
 
@@ -306,7 +343,30 @@ def playwright_scraper():
         print_error('Search query cannot be empty!')
         return
     
-    limit = input(Fore.CYAN + 'Max results [20]: ' + Style.RESET_ALL).strip()
+    # Sorting options
+    print()
+    print(Fore.CYAN + 'Sort by:')
+    print('  1. Best Match (default)')
+    print('  2. Price: Highest First')
+    print('  3. Price: Lowest First')
+    print('  4. Newly Listed')
+    print('  5. Most Bids')
+    print()
+    
+    sort_choice = input(Fore.GREEN + 'Select sort option [1]: ' + Style.RESET_ALL).strip()
+    sort_choice = sort_choice if sort_choice else '1'
+    
+    # eBay sort parameters
+    sort_params = {
+        '1': '',  # Best Match
+        '2': '&_sop=16',  # Price + Shipping: highest first
+        '3': '&_sop=15',  # Price + Shipping: lowest first
+        '4': '&_sop=10',  # Time: newly listed
+        '5': '&_sop=13',  # Number of bids: most first
+    }
+    sort_param = sort_params.get(sort_choice, '')
+    
+    limit = input(Fore.CYAN + '\nMax results [20]: ' + Style.RESET_ALL).strip()
     limit = int(limit) if limit.isdigit() else 20
     
     headless_choice = input(Fore.CYAN + 'Run in background (headless)? [yes/no]: ' + Style.RESET_ALL).strip().lower()
@@ -314,6 +374,17 @@ def playwright_scraper():
     
     print()
     print_info(f'Launching browser for: {Fore.YELLOW}{card}')
+    
+    # Show sort selection
+    sort_names = {
+        '1': 'Best Match',
+        '2': 'Price: Highest First',
+        '3': 'Price: Lowest First',
+        '4': 'Newly Listed',
+        '5': 'Most Bids'
+    }
+    print_info(f'Sort order: {Fore.YELLOW}{sort_names.get(sort_choice, "Best Match")}')
+    
     if headless:
         print_info('Running in headless mode (background)')
     else:
@@ -346,7 +417,7 @@ def playwright_scraper():
             page = context.new_page()
             
             # Navigate to eBay search
-            search_url = f'https://www.ebay.com/sch/i.html?_nkw=mtg+{card.replace(" ", "+")}&LH_BIN=1'
+            search_url = f'https://www.ebay.com/sch/i.html?_nkw=mtg+{card.replace(" ", "+")}&LH_BIN=1{sort_param}'
             print_info(f'Navigating to eBay...')
             
             try:
@@ -410,6 +481,14 @@ def playwright_scraper():
                             const priceEl = listing.querySelector(priceSelector + ', .s-item__price, span.s-item__price');
                             const price = priceEl ? priceEl.textContent.trim() : null;
                             
+                            // Get bid count
+                            const bidEl = listing.querySelector('.s-item__bids, .s-item__bidCount, [class*="bid"]');
+                            const bids = bidEl ? bidEl.textContent.trim() : '0 bids';
+                            
+                            // Get shipping info
+                            const shippingEl = listing.querySelector('.s-item__shipping, .s-item__freeXDays, [class*="shipping"]');
+                            const shipping = shippingEl ? shippingEl.textContent.trim() : 'See listing';
+                            
                             // Get URL
                             const linkEl = listing.querySelector('a.s-item__link, a[href*="/itm/"]');
                             const url = linkEl ? linkEl.href : '';
@@ -419,6 +498,8 @@ def playwright_scraper():
                                 items.push({
                                     title: title,
                                     price: price,
+                                    bids: bids,
+                                    shipping: shipping,
                                     url: url
                                 });
                             }
@@ -436,20 +517,27 @@ def playwright_scraper():
             
             processed = 0
             for item in results_js[:limit]:
+                # Extract bid count for display
+                bid_info = item.get('bids', '0 bids')
+                has_bids = 'bid' in bid_info.lower() and bid_info.strip() != '0 bids'
+                
                 results.append({
                     'card_name': item['title'],
                     'price': item['price'],
                     'url': item['url'],
                     'source': 'eBay (Playwright)',
                     'timestamp': datetime.now().isoformat(),
-                    'condition': 'Not specified',
-                    'shipping': 'See listing',
-                    'buy_it_now': True,
+                    'condition': bid_info if has_bids else 'Buy It Now',
+                    'shipping': item.get('shipping', 'See listing'),
+                    'buy_it_now': not has_bids,
                     'seller': 'eBay Seller',
                     'set_name': 'Unknown'
                 })
                 
-                print(f'   {Fore.GREEN}✓{Style.RESET_ALL} Found: {item["title"][:50]}...')
+                # Display with bid info
+                bid_display = f' | {Fore.YELLOW}{bid_info}{Style.RESET_ALL}' if has_bids else ''
+                price_display = f' | {Fore.GREEN}{item["price"]}{Style.RESET_ALL}'
+                print(f'   {Fore.GREEN}✓{Style.RESET_ALL} {item["title"][:45]}{price_display}{bid_display}')
                 processed += 1
             
             # Save debug files if no results
@@ -830,6 +918,381 @@ def show_stats():
         print_error(f'Failed to read database: {str(e)}')
 
 
+def export_to_csv():
+    '''
+    Export database results to CSV file on desktop
+    '''
+    db_path = os.path.join(os.getcwd(), 'mtg_cards.db')
+    
+    if not os.path.exists(db_path):
+        print_error('No database found. Run a scrape first!')
+        return
+    
+    print(Fore.YELLOW + '\n━━━ EXPORT TO CSV ━━━\n')
+    
+    try:
+        import csv
+        from datetime import datetime
+        
+        engine = create_engine(f'sqlite:///{db_path}')
+        Session = sessionmaker(bind=engine)
+        session = Session()
+        
+        # Get all results
+        results = session.query(MtgCard).order_by(desc(MtgCard.id)).all()
+        
+        if not results:
+            print_info('No results to export')
+            session.close()
+            return
+        
+        # Get desktop path
+        desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        csv_filename = f'mtg_cards_{timestamp}.csv'
+        csv_path = os.path.join(desktop_path, csv_filename)
+        
+        # Write CSV
+        with open(csv_path, 'w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = ['id', 'card_name', 'price', 'condition', 'seller', 'shipping', 'buy_it_now', 'url', 'source', 'timestamp']
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            
+            writer.writeheader()
+            for result in results:
+                writer.writerow({
+                    'id': result.id,
+                    'card_name': result.card_name,
+                    'price': result.price,
+                    'condition': result.condition,
+                    'seller': result.seller,
+                    'shipping': result.shipping,
+                    'buy_it_now': result.buy_it_now,
+                    'url': result.url,
+                    'source': result.source,
+                    'timestamp': result.timestamp
+                })
+        
+        session.close()
+        
+        print_success(f'Exported {len(results)} records to CSV')
+        print_info(f'File saved: {Fore.YELLOW}{csv_path}')
+        print()
+        
+    except Exception as e:
+        print_error(f'Export failed: {str(e)}')
+
+
+def upload_to_s3():
+    '''
+    Upload CSV export to S3 bucket
+    '''
+    print(Fore.YELLOW + '\n━━━ UPLOAD TO S3 ━━━\n')
+    
+    # Check for boto3
+    try:
+        import boto3
+        from botocore.exceptions import ClientError, NoCredentialsError
+    except ImportError:
+        print_error('boto3 not installed!')
+        print()
+        print('Install with:')
+        print(Fore.CYAN + '  pip install boto3')
+        print()
+        return
+    
+    # Get S3 configuration
+    s3_bucket = input(Fore.CYAN + 'S3 Bucket URL or name (e.g., s3://my-bucket or my-bucket): ' + Style.RESET_ALL).strip()
+    
+    if not s3_bucket:
+        print_error('S3 bucket cannot be empty!')
+        return
+    
+    # Parse bucket name
+    if s3_bucket.startswith('s3://'):
+        bucket_name = s3_bucket.replace('s3://', '').split('/')[0]
+        prefix = '/'.join(s3_bucket.replace('s3://', '').split('/')[1:])
+    else:
+        bucket_name = s3_bucket.split('/')[0]
+        prefix = '/'.join(s3_bucket.split('/')[1:])
+    
+    # Check for existing CSV or export new one
+    desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
+    csv_files = [f for f in os.listdir(desktop_path) if f.startswith('mtg_cards_') and f.endswith('.csv')]
+    
+    if csv_files:
+        csv_files.sort(reverse=True)
+        use_existing = input(Fore.CYAN + f'Use existing CSV ({csv_files[0]})? [yes/no]: ' + Style.RESET_ALL).strip().lower()
+        
+        if use_existing == 'yes':
+            csv_path = os.path.join(desktop_path, csv_files[0])
+        else:
+            print_info('Exporting new CSV...')
+            export_to_csv()
+            csv_files = [f for f in os.listdir(desktop_path) if f.startswith('mtg_cards_') and f.endswith('.csv')]
+            csv_files.sort(reverse=True)
+            csv_path = os.path.join(desktop_path, csv_files[0])
+    else:
+        print_info('No existing CSV found. Exporting...')
+        export_to_csv()
+        csv_files = [f for f in os.listdir(desktop_path) if f.startswith('mtg_cards_') and f.endswith('.csv')]
+        if not csv_files:
+            print_error('Failed to create CSV')
+            return
+        csv_files.sort(reverse=True)
+        csv_path = os.path.join(desktop_path, csv_files[0])
+    
+    # Upload to S3
+    try:
+        s3_client = boto3.client('s3')
+        
+        # Construct S3 key
+        filename = os.path.basename(csv_path)
+        s3_key = f'{prefix}/{filename}' if prefix else filename
+        
+        print()
+        print_info(f'Uploading to s3://{bucket_name}/{s3_key}...')
+        
+        s3_client.upload_file(csv_path, bucket_name, s3_key)
+        
+        print_success('Upload completed!')
+        print_info(f'S3 URL: {Fore.YELLOW}s3://{bucket_name}/{s3_key}')
+        print()
+        
+    except NoCredentialsError:
+        print_error('AWS credentials not found!')
+        print()
+        print('Configure AWS credentials:')
+        print(Fore.CYAN + '  aws configure')
+        print(Style.RESET_ALL + 'Or set environment variables:')
+        print(Fore.CYAN + '  export AWS_ACCESS_KEY_ID="your-key"')
+        print(Fore.CYAN + '  export AWS_SECRET_ACCESS_KEY="your-secret"')
+        print()
+    except ClientError as e:
+        print_error(f'S3 upload failed: {str(e)}')
+        print()
+    except Exception as e:
+        print_error(f'Upload failed: {str(e)}')
+
+
+def schedule_cron():
+    '''
+    Setup cron job for automated scraping
+    '''
+    print(Fore.YELLOW + '\n━━━ SCHEDULE CRON JOB ━━━\n')
+    
+    print('This will create a cron job to run the scraper automatically.')
+    print()
+    
+    # Get scraper settings
+    print(Fore.CYAN + 'Scraping method:')
+    print('  1. Playwright (recommended)')
+    print('  2. eBay API')
+    print('  3. Scrapy')
+    print()
+    
+    method = input(Fore.GREEN + 'Select method [1]: ' + Style.RESET_ALL).strip()
+    method = method if method else '1'
+    
+    card = input(Fore.CYAN + '\nCard name to search: ' + Style.RESET_ALL).strip()
+    if not card:
+        print_error('Card name cannot be empty!')
+        return
+    
+    # Schedule frequency
+    print()
+    print(Fore.CYAN + 'Run frequency:')
+    print('  1. Every hour')
+    print('  2. Every 6 hours')
+    print('  3. Daily at specific time')
+    print('  4. Weekly on specific day')
+    print('  5. Custom cron expression')
+    print()
+    
+    freq = input(Fore.GREEN + 'Select frequency [1]: ' + Style.RESET_ALL).strip()
+    freq = freq if freq else '1'
+    
+    # Build cron expression
+    if freq == '1':
+        cron_expr = '0 * * * *'  # Every hour
+    elif freq == '2':
+        cron_expr = '0 */6 * * *'  # Every 6 hours
+    elif freq == '3':
+        hour = input(Fore.CYAN + 'Hour (0-23): ' + Style.RESET_ALL).strip()
+        cron_expr = f'0 {hour} * * *'  # Daily at specified hour
+    elif freq == '4':
+        day = input(Fore.CYAN + 'Day (0=Sun, 1=Mon, ..., 6=Sat): ' + Style.RESET_ALL).strip()
+        hour = input(Fore.CYAN + 'Hour (0-23): ' + Style.RESET_ALL).strip()
+        cron_expr = f'0 {hour} * * {day}'  # Weekly
+    else:
+        cron_expr = input(Fore.CYAN + 'Custom cron expression: ' + Style.RESET_ALL).strip()
+    
+    # Get script path
+    script_path = os.path.abspath(__file__)
+    python_path = sys.executable
+    project_dir = os.getcwd()
+    
+    # Build command
+    method_map = {
+        '1': f'cd {project_dir} && {python_path} {script_path} --method playwright --card "{card}"',
+        '2': f'cd {project_dir} && {python_path} {script_path} --method api --card "{card}"',
+        '3': f'cd {project_dir} && {python_path} {script_path} --method scrapy --card "{card}"'
+    }
+    command = method_map.get(method, method_map['1'])
+    
+    # Optional: Export CSV after scraping
+    export_csv = input(Fore.CYAN + '\nExport to CSV after each run? [yes/no]: ' + Style.RESET_ALL).strip().lower()
+    if export_csv == 'yes':
+        command += f' && {python_path} {script_path} --export-csv'
+    
+    # Optional: Upload to S3
+    upload_s3 = input(Fore.CYAN + 'Upload to S3 after each run? [yes/no]: ' + Style.RESET_ALL).strip().lower()
+    if upload_s3 == 'yes':
+        s3_bucket = input(Fore.CYAN + 'S3 bucket URL: ' + Style.RESET_ALL).strip()
+        os.environ['MTG_S3_BUCKET'] = s3_bucket
+        command += f' && {python_path} {script_path} --upload-s3 {s3_bucket}'
+    
+    # Create cron entry
+    cron_line = f'{cron_expr} {command} >> {project_dir}/cron.log 2>&1'
+    
+    print()
+    print(Fore.CYAN + '─' * 70)
+    print(Fore.YELLOW + 'Cron Job Configuration:')
+    print(Fore.CYAN + '─' * 70)
+    print()
+    print(cron_line)
+    print()
+    print(Fore.CYAN + '─' * 70)
+    print()
+    
+    confirm = input(Fore.GREEN + 'Add this cron job? [yes/no]: ' + Style.RESET_ALL).strip().lower()
+    
+    if confirm == 'yes':
+        try:
+            # Get current crontab
+            import subprocess
+            
+            result = subprocess.run(['crontab', '-l'], capture_output=True, text=True)
+            current_cron = result.stdout if result.returncode == 0 else ''
+            
+            # Add new job
+            new_cron = current_cron.rstrip() + '\n' + cron_line + '\n'
+            
+            # Write back
+            process = subprocess.Popen(['crontab', '-'], stdin=subprocess.PIPE, text=True)
+            process.communicate(input=new_cron)
+            
+            print_success('Cron job added successfully!')
+            print()
+            print_info('View your cron jobs with: ' + Fore.YELLOW + 'crontab -l')
+            print_info('Remove this job with: ' + Fore.YELLOW + 'crontab -e')
+            print_info('Logs will be saved to: ' + Fore.YELLOW + f'{project_dir}/cron.log')
+            print()
+            
+        except Exception as e:
+            print_error(f'Failed to add cron job: {str(e)}')
+            print()
+            print('You can manually add this line to your crontab:')
+            print(Fore.CYAN + f'  crontab -e')
+            print(Style.RESET_ALL + 'Then add:')
+            print(Fore.YELLOW + cron_line)
+            print()
+    else:
+        print_info('Cron job not added')
+
+
+def remove_cron():
+    '''
+    Remove scheduled cron jobs for MTG scraper
+    '''
+    import subprocess
+    
+    print(Fore.YELLOW + '\n━━━ REMOVE CRON JOBS ━━━\n')
+    
+    script_path = os.path.abspath(__file__)
+    
+    try:
+        # Get current crontab
+        result = subprocess.run(['crontab', '-l'], capture_output=True, text=True)
+        
+        if result.returncode != 0:
+            print_info('No cron jobs found')
+            return
+        
+        current_cron = result.stdout
+        lines = current_cron.split('\n')
+        
+        # Find MTG scraper jobs
+        mtg_jobs = []
+        for i, line in enumerate(lines):
+            if script_path in line and line.strip() and not line.strip().startswith('#'):
+                mtg_jobs.append((i, line))
+        
+        if not mtg_jobs:
+            print_info('No MTG scraper cron jobs found')
+            return
+        
+        # Display jobs
+        print(Fore.CYAN + 'Found the following MTG scraper cron jobs:\n')
+        for idx, (_, job) in enumerate(mtg_jobs, 1):
+            print(f'{Fore.YELLOW}{idx}. {Fore.WHITE}{job.strip()}')
+        
+        print()
+        print(f'{Fore.YELLOW}0. {Fore.WHITE}Cancel')
+        print()
+        
+        # Get user selection
+        choice = input(Fore.GREEN + 'Select job to remove (or "all" to remove all): ' + Style.RESET_ALL).strip().lower()
+        
+        if choice == '0' or choice == 'cancel':
+            print_info('Operation cancelled')
+            return
+        
+        # Confirm removal
+        if choice == 'all':
+            confirm = input(Fore.RED + f'Remove ALL {len(mtg_jobs)} MTG scraper cron jobs? [yes/no]: ' + Style.RESET_ALL).strip().lower()
+            if confirm != 'yes':
+                print_info('Operation cancelled')
+                return
+            
+            # Remove all MTG jobs
+            indices_to_remove = [idx for idx, _ in mtg_jobs]
+            new_lines = [line for i, line in enumerate(lines) if i not in indices_to_remove]
+        else:
+            try:
+                job_num = int(choice)
+                if job_num < 1 or job_num > len(mtg_jobs):
+                    print_error('Invalid selection')
+                    return
+                
+                idx_to_remove = mtg_jobs[job_num - 1][0]
+                confirm = input(Fore.YELLOW + 'Remove this cron job? [yes/no]: ' + Style.RESET_ALL).strip().lower()
+                
+                if confirm != 'yes':
+                    print_info('Operation cancelled')
+                    return
+                
+                # Remove selected job
+                new_lines = [line for i, line in enumerate(lines) if i != idx_to_remove]
+            except ValueError:
+                print_error('Invalid input')
+                return
+        
+        # Write back updated crontab
+        new_cron = '\n'.join(new_lines)
+        process = subprocess.Popen(['crontab', '-'], stdin=subprocess.PIPE, text=True)
+        process.communicate(input=new_cron)
+        
+        print_success('Cron job(s) removed successfully!')
+        print()
+        
+    except Exception as e:
+        print_error(f'Failed to remove cron job: {str(e)}')
+        print()
+        print('You can manually remove cron jobs with:')
+        print(Fore.CYAN + '  crontab -e')
+        print()
+
+
 def clear_database():
     '''
     Clear all data from database
@@ -876,8 +1339,16 @@ def interactive_menu():
         elif choice == '6':
             show_stats()
         elif choice == '7':
-            configure_settings()
+            export_to_csv()
         elif choice == '8':
+            upload_to_s3()
+        elif choice == '9':
+            schedule_cron()
+        elif choice == '10':
+            remove_cron()
+        elif choice == '11':
+            configure_settings()
+        elif choice == '12':
             clear_database()
         elif choice == '0':
             print()
@@ -885,7 +1356,7 @@ def interactive_menu():
             print()
             break
         else:
-            print_error('Invalid option! Please select 0-8.')
+            print_error('Invalid option! Please select 0-11.')
         
         input(Fore.CYAN + '\nPress Enter to continue...' + Style.RESET_ALL)
         print('\n' * 2)

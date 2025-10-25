@@ -47,6 +47,7 @@ env/
 
 # Logs
 *.log
+cron.log
 
 # Debug files
 ebay_debug.png
