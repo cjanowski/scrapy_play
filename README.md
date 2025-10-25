@@ -111,7 +111,7 @@ https://github.com/user-attachments/assets/93b40a63-002a-443a-8d47-515ff438ebf8
   - Very fast (no browser overhead)
   - Production features: CAPTCHA solving, proxies, AutoThrottle
 
-**Recommendation:** Use Playwright (option 1) for actual scraping, or API (option 2) for production.
+**Recommendation:** Use Playwright (option 1) for actual scraping, or API (option 2) for this demo.
   
 ### Future Sources
 - TCGPlayer API
@@ -465,7 +465,7 @@ print(tabulate(rows, headers=headers, tablefmt='fancy_grid'))
 
 ## Best Practices
 
-### 🤖 "Good Bot" Behavior
+### "Good Bot" Behavior
 - **Respect robots.txt**: Always obey website rules (ROBOTSTXT_OBEY = True)
 - **Use realistic User-Agents**: Identify as a real browser, not as a bot
 - **Control crawl rate**: AutoThrottle adjusts speed based on server capacity
@@ -474,14 +474,14 @@ print(tabulate(rows, headers=headers, tablefmt='fancy_grid'))
 
 ### 🚀 Production Features (Already Implemented!)
 This scraper includes production-ready features:
-- ✅ **CAPTCHA Solving**: 2Captcha integration (configure with API key)
-- ✅ **Proxy Rotation**: Built-in middleware for rotating proxies
-- ✅ **AutoThrottle**: Adapts crawling speed to server load
-- ✅ **Smart Retries**: Exponential backoff for failed requests
-- ✅ **API Support**: Official eBay API integration
-- ✅ **Configuration Manager**: Easy setup through menu option 6
+- **CAPTCHA Solving**: 2Captcha integration (configure with API key)
+- **Proxy Rotation**: Built-in middleware for rotating proxies
+- **AutoThrottle**: Adapts crawling speed to server load
+- **Smart Retries**: Exponential backoff for failed requests
+- **API Support**: Official eBay API integration
+- **Configuration Manager**: Easy setup through menu option 6
 
-### 🔮 Future Enhancements
+### Future Enhancements
 - Distributed crawling with Scrapy Cloud
 - More CAPTCHA types (hCaptcha, FunCaptcha)
 - User-Agent rotation middleware

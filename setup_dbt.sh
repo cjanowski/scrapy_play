@@ -9,19 +9,19 @@ echo ""
 
 # Check if virtual environment is active
 if [[ -z "$VIRTUAL_ENV" ]]; then
-    echo "⚠️  Virtual environment not detected."
+    echo "Virtual environment not detected."
     echo "Activating virtual environment..."
     source venv/bin/activate
 fi
 
 # Install dbt packages
-echo "📦 Installing dbt packages..."
+echo "Installing dbt packages..."
 pip install dbt-core dbt-sqlite
 
 # Check if database exists
 if [ ! -f "mtg_cards.db" ]; then
     echo ""
-    echo "⚠️  No database found (mtg_cards.db)"
+    echo "No database found (mtg_cards.db)"
     echo "You need to run a scrape first to populate the database."
     echo ""
     echo "Run the scraper:"
@@ -32,7 +32,7 @@ fi
 
 # Run dbt debug to check setup
 echo ""
-echo "🔍 Checking dbt configuration..."
+echo "Checking dbt configuration..."
 dbt debug --profiles-dir .
 
 # Ask if user wants to run models now
@@ -41,11 +41,11 @@ read -p "Run dbt models now? (yes/no): " run_models
 
 if [ "$run_models" = "yes" ]; then
     echo ""
-    echo "🚀 Running dbt models..."
+    echo "Running dbt models..."
     dbt run --profiles-dir .
     
     echo ""
-    echo "✅ dbt setup complete!"
+    echo "dbt setup complete!"
     echo ""
     echo "Available analytics tables:"
     echo "  • card_price_stats - Price statistics by card"
@@ -58,7 +58,7 @@ if [ "$run_models" = "yes" ]; then
     echo ""
 else
     echo ""
-    echo "✅ dbt installed successfully!"
+    echo "dbt installed successfully!"
     echo ""
     echo "To run dbt models manually:"
     echo "  dbt run --profiles-dir ."
@@ -68,4 +68,3 @@ else
     echo "  → Select option 7 (Run dbt Models)"
     echo ""
 fi
-

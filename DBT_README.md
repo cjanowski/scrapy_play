@@ -235,4 +235,3 @@ sqlite3 -header -csv mtg_cards.db "SELECT * FROM top_cards;" > top_cards.csv
 - [dbt Documentation](https://docs.getdbt.com/)
 - [dbt Best Practices](https://docs.getdbt.com/guides/best-practices)
 - [SQL Reference](https://www.sqlite.org/lang.html)
-
