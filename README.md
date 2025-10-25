@@ -76,17 +76,6 @@ python mtgscraper.py
 
 See [DBT_README.md](DBT_README.md) for detailed documentation.
 
-## Demo Video
-
-https://github.com/user-attachments/assets/93b40a63-002a-443a-8d47-515ff438ebf8
-
-## Usage Images
-<img width="1512" height="982" alt="Screenshot 2025-10-24 at 9 01 35 PM" src="https://github.com/user-attachments/assets/a963f5be-5de0-47b6-8d4a-db41cf29b435" />
-<img width="1512" height="982" alt="Screenshot 2025-10-24 at 9 02 37 PM" src="https://github.com/user-attachments/assets/53702c3d-baf0-4770-9039-7ccb5b056371" />
-<img width="1512" height="982" alt="Screenshot 2025-10-24 at 9 02 53 PM" src="https://github.com/user-attachments/assets/5c0aa443-1a4a-4b72-8f7f-61184ecc10b7" />
-<img width="1512" height="982" alt="Screenshot 2025-10-24 at 9 03 09 PM" src="https://github.com/user-attachments/assets/bf5506e4-cd75-4fc7-99c2-6542e932dec2" />
-<img width="1512" height="982" alt="Screenshot 2025-10-24 at 9 04 24 PM" src="https://github.com/user-attachments/assets/37d22df3-7b13-476b-a482-3b7e6a3b8633" />
-
 ## Data Collection Methods
 
 ### Playwright (Default)
