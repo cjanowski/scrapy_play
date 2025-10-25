@@ -12,6 +12,10 @@ A CLI tool for collecting Magic: The Gathering card prices. Features **eBay API 
                                            /_/                 
 ```
 
+## Demo Video
+
+https://github.com/user-attachments/assets/c0a1145c-6992-48f9-af02-059f5ca79b5c
+
 ## Features
 
 - **Interactive Menu**: Easy-to-use menu interface
@@ -31,7 +35,7 @@ A CLI tool for collecting Magic: The Gathering card prices. Features **eBay API 
 - **Data Quality Tests**: Automated testing for data integrity
 - **Interactive Analytics**: View price trends, statistics, and insights
 
-## 🆕 dbt Analytics Integration
+## dbt Analytics Integration
 
 Transform your scraped data into actionable insights with built-in dbt (data build tool) support!
 
