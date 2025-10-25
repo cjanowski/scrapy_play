@@ -145,6 +145,9 @@ pip install -r requirements-minimal.txt
 
 # OR install full features (includes TensorFlow - large download)
 pip install -r requirements.txt
+
+# Install dbt core
+pip install dbt-core dbt-sqlite
 ```
 
 **Note:** TensorFlow is ~500MB. Use `requirements-minimal.txt` if you don't need local ML CAPTCHA solving.
