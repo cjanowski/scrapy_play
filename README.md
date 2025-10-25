@@ -28,6 +28,10 @@ A CLI tool for collecting Magic: The Gathering card prices. Features **eBay API 
 - **Debug Mode**: Auto-screenshots and visible browser option
 - **Configurable**: Easy configuration for CAPTCHA, proxies, and APIs
 
+## Demo Video
+
+https://github.com/user-attachments/assets/93b40a63-002a-443a-8d47-515ff438ebf8
+
 ## Usage Images
 <img width="1512" height="982" alt="Screenshot 2025-10-24 at 9 01 35 PM" src="https://github.com/user-attachments/assets/a963f5be-5de0-47b6-8d4a-db41cf29b435" />
 <img width="1512" height="982" alt="Screenshot 2025-10-24 at 9 02 37 PM" src="https://github.com/user-attachments/assets/53702c3d-baf0-4770-9039-7ccb5b056371" />
