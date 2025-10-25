@@ -90,9 +90,11 @@ See [DBT_README.md](DBT_README.md) for detailed documentation.
   - Slower but more effective than Scrapy
 
 ### Official API
-- **eBay Finding API**
-  - Free API key from [eBay Developers Program](https://developer.ebay.com/)
+- **eBay Browse API (RESTful)**
+  - OAuth 2.0 with Client ID + Client Secret
+  - Free from [eBay Developers Program](https://developer.ebay.com/)
   - No blocking, clean JSON responses
+  - Modern RESTful API with better rate limits
   - **Multiple search types:** Card name, set, type, custom
 
 ### Scrapy Spider
@@ -161,10 +163,12 @@ docker run -p 8050:8050 scrapinghub/splash
 
 ### Configuration (Optional Services)
 
-**1. eBay API (Recommended for production):**
+**1. eBay Browse API (Recommended for production):**
 ```bash
 # Register at https://developer.ebay.com/
-export EBAY_API_KEY="your-app-id-here"
+# Get your OAuth credentials (Client ID + Client Secret)
+export EBAY_CLIENT_ID="your-app-id-here"
+export EBAY_CLIENT_SECRET="your-cert-id-here"
 ```
 
 **2. CAPTCHA Solver (Optional - Choose one):**
@@ -193,7 +197,8 @@ export PROXY_LIST="proxies.txt"
 
 **Make persistent:**
 ```bash
-echo 'export EBAY_API_KEY="your-key"' >> ~/.zshrc
+echo 'export EBAY_CLIENT_ID="your-client-id"' >> ~/.zshrc
+echo 'export EBAY_CLIENT_SECRET="your-client-secret"' >> ~/.zshrc
 echo 'export CAPTCHA_API_KEY="your-key"' >> ~/.zshrc
 ```
 
@@ -252,20 +257,23 @@ python mtgscraper.py -c "Lightning Bolt" -p 3
 
 ### Example Workflows
 
-#### Method 1: eBay API (Recommended)
+#### Method 1: eBay Browse API (Recommended)
 
-1. **Get your API key:**
+1. **Get your OAuth credentials:**
    ```bash
    # Register at developer.ebay.com
-   export EBAY_API_KEY="your-app-id"
+   # Get Client ID (App ID) and Client Secret (Cert ID)
+   export EBAY_CLIENT_ID="your-app-id"
+   export EBAY_CLIENT_SECRET="your-cert-id"
    ```
 
 2. **Run and search:**
    ```bash
    python mtgscraper.py
-   # Select option 1
+   # Select option 2 (eBay API Search)
    # Enter card name
-   # View results with option 3
+   # OAuth token will be obtained automatically
+   # View results with option 4
    ```
 
 #### Method 1: Playwright Browser Scraping (Recommended!)
@@ -293,13 +301,15 @@ python mtgscraper.py -c "Lightning Bolt" -p 3
 - **By type:** "creature", "planeswalker", "instant"
 - **Custom:** "foil rare mythic"
 
-#### Method 2: eBay API (Production)
+#### Method 2: eBay Browse API (Production)
 
-1. **Get API key and run:**
+1. **Get OAuth credentials and run:**
    ```bash
-   export EBAY_API_KEY="your-app-id"
+   export EBAY_CLIENT_ID="your-app-id"
+   export EBAY_CLIENT_SECRET="your-cert-id"
    python mtgscraper.py
-   # Select option 2 - eBay API
+   # Select option 2 - eBay Browse API
+   # OAuth authentication happens automatically
    # Choose search type
    # Get official data
    ```

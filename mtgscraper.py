@@ -83,7 +83,7 @@ def print_menu():
     print(format_menu_line('  ' + Fore.GREEN + Style.BRIGHT + 'SCRAPING METHODS' + Style.RESET_ALL))
     print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
     print(format_menu_line('  ' + Fore.YELLOW + '1.  ' + Fore.WHITE + 'Playwright Scraper ' + Fore.GREEN + Style.BRIGHT + '(Recommended)' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '2.  ' + Fore.WHITE + 'eBay API Search ' + Fore.CYAN + '(API key required)' + Style.RESET_ALL))
+    print(format_menu_line('  ' + Fore.YELLOW + '2.  ' + Fore.WHITE + 'eBay Browse API ' + Fore.CYAN + '(OAuth 2.0)' + Style.RESET_ALL))
     print(format_menu_line('  ' + Fore.YELLOW + '3.  ' + Fore.WHITE + 'Scrapy Spider ' + Fore.RED + '(Advanced setup)' + Style.RESET_ALL))
     print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
     print(format_menu_line('  ' + Fore.BLUE + Style.BRIGHT + 'VIEW & ANALYZE' + Style.RESET_ALL))
@@ -118,30 +118,34 @@ def print_menu():
 
 def ebay_api_search():
     '''
-    Search using eBay's official Finding API (legal and recommended)
+    Search using eBay's official Browse API (RESTful, OAuth 2.0)
     '''
     import requests
     from datetime import datetime
     
-    print(Fore.YELLOW + '\n━━━ eBay API SEARCH (Official & Legal) ━━━\n')
-    print_info('This uses eBay\'s official API - the legal and recommended method')
+    print(Fore.YELLOW + '\n━━━ eBay BROWSE API (OAuth 2.0) ━━━\n')
+    print_info('This uses eBay\'s modern RESTful API with OAuth')
     print()
     
-    # Check for API key
-    api_key = os.environ.get('EBAY_API_KEY')
+    # Check for OAuth credentials
+    client_id = os.environ.get('EBAY_CLIENT_ID')
+    client_secret = os.environ.get('EBAY_CLIENT_SECRET')
     
-    if not api_key:
-        print(Fore.YELLOW + '⚠  eBay API Key Required\n')
-        print('To use eBay\'s API, you need to:')
+    if not client_id or not client_secret:
+        print(Fore.YELLOW + '⚠  eBay OAuth Credentials Required\n')
+        print('To use eBay\'s Browse API, you need to:')
         print('1. Register at: ' + Fore.CYAN + 'https://developer.ebay.com/')
-        print(Style.RESET_ALL + '2. Create an application and get your API key')
-        print('3. Set environment variable: ' + Fore.CYAN + 'export EBAY_API_KEY="your-key-here"')
+        print(Style.RESET_ALL + '2. Create an application and get your credentials')
+        print('3. Set environment variables:')
+        print(Fore.CYAN + '   export EBAY_CLIENT_ID="your-app-id"')
+        print(Fore.CYAN + '   export EBAY_CLIENT_SECRET="your-cert-id"')
         print()
         
-        use_demo = input(Fore.CYAN + 'Use demo API key for testing? (yes/no): ' + Style.RESET_ALL).strip().lower()
+        use_demo = input(Fore.CYAN + 'Use demo mode for testing? (yes/no): ' + Style.RESET_ALL).strip().lower()
         
         if use_demo == 'yes':
-            api_key = 'DEMO_KEY_SIMULATED'
+            client_id = 'DEMO_MODE'
+            client_secret = 'DEMO_MODE'
             print_info('Using simulated API response for demonstration')
         else:
             print_info('Cancelled. Register at https://developer.ebay.com/ to get started!')
@@ -183,13 +187,13 @@ def ebay_api_search():
     print()
     
     try:
-        if api_key == 'DEMO_KEY_SIMULATED':
+        if client_id == 'DEMO_MODE':
             # Simulated API response for demo purposes
             print_info('Simulating API call (demo mode)...')
             results = _simulate_ebay_api_response(card, limit)
         else:
-            # Real API call
-            results = _call_ebay_finding_api(api_key, card, limit)
+            # Real API call with OAuth
+            results = _call_ebay_browse_api(client_id, client_secret, card, limit)
         
         if not results:
             print_error('No results found')
@@ -257,41 +261,95 @@ def _simulate_ebay_api_response(card_name, limit):
     return results
 
 
-def _call_ebay_finding_api(api_key, keywords, limit):
+def _get_ebay_oauth_token(client_id, client_secret):
     '''
-    Call eBay's Finding API
+    Get OAuth 2.0 access token for eBay Browse API
+    '''
+    import requests
+    import base64
+    
+    # OAuth token endpoint
+    token_url = 'https://api.ebay.com/identity/v1/oauth2/token'
+    
+    # Encode credentials
+    credentials = f'{client_id}:{client_secret}'
+    encoded_credentials = base64.b64encode(credentials.encode()).decode()
+    
+    headers = {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': f'Basic {encoded_credentials}'
+    }
+    
+    data = {
+        'grant_type': 'client_credentials',
+        'scope': 'https://api.ebay.com/oauth/api_scope'
+    }
+    
+    response = requests.post(token_url, headers=headers, data=data, timeout=10)
+    response.raise_for_status()
+    
+    token_data = response.json()
+    return token_data['access_token']
+
+
+def _call_ebay_browse_api(client_id, client_secret, keywords, limit):
+    '''
+    Call eBay's Browse API (RESTful with OAuth 2.0)
     '''
     import requests
     
-    base_url = 'https://svcs.ebay.com/services/search/FindingService/v1'
+    # Get OAuth token
+    print_info('Getting OAuth access token...')
+    access_token = _get_ebay_oauth_token(client_id, client_secret)
+    print_success('OAuth token obtained!')
+    print()
     
-    params = {
-        'OPERATION-NAME': 'findItemsByKeywords',
-        'SERVICE-VERSION': '1.0.0',
-        'SECURITY-APPNAME': api_key,
-        'RESPONSE-DATA-FORMAT': 'JSON',
-        'keywords': f'mtg {keywords}',
-        'paginationInput.entriesPerPage': str(limit),
-        'sortOrder': 'PricePlusShippingLowest'
+    # Browse API search endpoint
+    search_url = 'https://api.ebay.com/buy/browse/v1/item_summary/search'
+    
+    headers = {
+        'Authorization': f'Bearer {access_token}',
+        'X-EBAY-C-MARKETPLACE-ID': 'EBAY_US',
+        'Content-Type': 'application/json'
     }
     
-    response = requests.get(base_url, params=params, timeout=10)
+    params = {
+        'q': f'mtg {keywords}',
+        'limit': str(min(limit, 200)),
+        'sort': 'price'
+    }
+    
+    response = requests.get(search_url, headers=headers, params=params, timeout=10)
     response.raise_for_status()
     
     data = response.json()
     
     results = []
-    search_result = data.get('findItemsByKeywordsResponse', [{}])[0]
-    items = search_result.get('searchResult', [{}])[0].get('item', [])
+    items = data.get('itemSummaries', [])
     
     for item in items:
+        # Extract price
+        price_info = item.get('price', {})
+        price_value = price_info.get('value', '0')
+        price_currency = price_info.get('currency', 'USD')
+        
+        # Extract shipping
+        shipping_info = item.get('shippingOptions', [{}])[0] if item.get('shippingOptions') else {}
+        shipping_cost = shipping_info.get('shippingCost', {})
+        shipping_value = shipping_cost.get('value', '0')
+        
+        if shipping_value == '0' or shipping_value == '0.0':
+            shipping_text = 'Free shipping'
+        else:
+            shipping_text = f'${shipping_value} shipping'
+        
         results.append({
-            'title': item.get('title', [''])[0],
-            'price': f"${item.get('sellingStatus', [{}])[0].get('currentPrice', [{}])[0].get('__value__', '0')}",
-            'condition': item.get('condition', [{}])[0].get('conditionDisplayName', ['Not specified'])[0],
-            'url': item.get('viewItemURL', [''])[0],
-            'shipping': item.get('shippingInfo', [{}])[0].get('shippingServiceCost', [{}])[0].get('__value__', 'See listing'),
-            'seller': item.get('sellerInfo', [{}])[0].get('sellerUserName', ['Unknown'])[0]
+            'title': item.get('title', 'Unknown'),
+            'price': f'${price_value}',
+            'condition': item.get('condition', 'Not specified'),
+            'url': item.get('itemWebUrl', ''),
+            'shipping': shipping_text,
+            'seller': item.get('seller', {}).get('username', 'Unknown')
         })
     
     return results
@@ -796,13 +854,23 @@ def configure_settings():
     print('   • Run: ' + Fore.CYAN + 'export PROXY_LIST="proxies.txt"')
     print()
     
-    print(Fore.CYAN + '3. eBay API Key')
-    print('   Current: ' + (Fore.GREEN + 'Configured' if os.environ.get('EBAY_API_KEY') else Fore.RED + 'Not configured'))
+    print(Fore.CYAN + '3. eBay Browse API (OAuth 2.0)')
+    client_id = os.environ.get('EBAY_CLIENT_ID')
+    client_secret = os.environ.get('EBAY_CLIENT_SECRET')
+    
+    if client_id and client_secret:
+        print('   Current: ' + Fore.GREEN + 'Configured ✓')
+    elif client_id or client_secret:
+        print('   Current: ' + Fore.YELLOW + 'Partially configured (missing one credential)')
+    else:
+        print('   Current: ' + Fore.RED + 'Not configured')
+    
     print()
-    print('   To enable eBay API:')
+    print('   To enable eBay Browse API:')
     print('   • Register at: ' + Fore.YELLOW + 'https://developer.ebay.com/')
-    print(Style.RESET_ALL + '   • Create application and get App ID')
-    print('   • Run: ' + Fore.CYAN + 'export EBAY_API_KEY="your-app-id"')
+    print(Style.RESET_ALL + '   • Create application and get OAuth credentials')
+    print('   • Run: ' + Fore.CYAN + 'export EBAY_CLIENT_ID="your-app-id"')
+    print('   • Run: ' + Fore.CYAN + 'export EBAY_CLIENT_SECRET="your-cert-id"')
     print()
     
     print(Fore.YELLOW + 'Tip: Add exports to ~/.zshrc or ~/.bashrc to make them permanent')
