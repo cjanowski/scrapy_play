@@ -14,6 +14,11 @@ from sqlalchemy import create_engine, desc
 from sqlalchemy.orm import sessionmaker
 from mtgscraper.pipelines import MtgCard, Base
 import pyfiglet
+from mtgscraper.colors import (
+    Colors, gradient_text, cyber_gradient, purple_gradient, 
+    magic_gradient, fire_gradient, green_gradient, rainbow_gradient,
+    center_colored_text, visible_length, strip_ansi
+)
 
 # Initialize colorama
 init(autoreset=True)
@@ -21,44 +26,58 @@ init(autoreset=True)
 
 def print_banner():
     '''
-    Display ASCII art banner
+    Display ASCII art banner with gradient effects
     '''
     banner = pyfiglet.figlet_format('MTG Scraper', font='slant')
-    print(Fore.CYAN + banner)
-    print(Fore.YELLOW + '=' * 70)
-    print(Fore.GREEN + ' Magic: The Gathering Card Price Scraper'.center(70))
-    print(Fore.YELLOW + '=' * 70)
+    
+    # Apply gradient to each line of the banner
+    banner_lines = banner.split('\n')
+    for line in banner_lines:
+        if line.strip():
+            # Cyber gradient for the ASCII art
+            print(cyber_gradient(line))
+        else:
+            print()
+    
+    # Gradient separator
+    separator = '═' * 70
+    print(gradient_text(separator, (0, 255, 255), (200, 0, 255)))
+    
+    # Subtitle with magic gradient
+    subtitle = ' Magic: The Gathering Card Price Scraper '
+    gradient_subtitle = magic_gradient(subtitle)
+    print(center_colored_text(gradient_subtitle, 70))
+    
+    # Bottom separator
+    print(gradient_text(separator, (200, 0, 255), (0, 255, 255)))
     print()
 
 
 def print_success(message):
     '''
-    Print success message
+    Print success message with gradient
     '''
-    print(Fore.GREEN + f'✓ {message}')
+    icon = gradient_text('✓', (0, 255, 0), (100, 255, 100))
+    print(f'{icon} {Colors.BRIGHT_GREEN}{message}{Colors.RESET}')
 
 
 def print_error(message):
     '''
-    Print error message
+    Print error message with gradient
     '''
-    print(Fore.RED + f'✗ {message}')
+    icon = gradient_text('✗', (255, 0, 0), (255, 100, 100))
+    print(f'{icon} {Colors.BRIGHT_RED}{message}{Colors.RESET}')
 
 
 def print_info(message):
     '''
-    Print info message
+    Print info message with gradient
     '''
-    print(Fore.CYAN + f'ℹ {message}')
+    icon = gradient_text('ℹ', (0, 255, 255), (100, 200, 255))
+    print(f'{icon} {Colors.BRIGHT_CYAN}{message}{Colors.RESET}')
 
 
-def strip_ansi(text):
-    '''
-    Remove ANSI color codes from text for length calculation
-    '''
-    import re
-    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
-    return ansi_escape.sub('', text)
+# strip_ansi now imported from colors module
 
 
 def format_menu_line(content, width=54):
@@ -70,49 +89,142 @@ def format_menu_line(content, width=54):
     # Calculate actual visible length without ANSI codes
     visible_length = len(strip_ansi(content))
     padding = ' ' * (width - visible_length)
-    return Fore.MAGENTA + '║' + content + padding + Fore.MAGENTA + '║'
+    border_color = Colors.rgb(138, 43, 226)
+    border = f'{border_color}║{Colors.RESET}'
+    return border + content + padding + border
 
 
 def print_menu():
     '''
-    Display main menu
+    Display main menu with gradient effects
     '''
-    print(Fore.MAGENTA + '╔══════════════════════════════════════════════════════╗')
-    print(format_menu_line(Fore.CYAN + Style.BRIGHT + 'MAIN MENU'.center(54) + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╠══════════════════════════════════════════════════════╣')
-    print(format_menu_line('  ' + Fore.GREEN + Style.BRIGHT + 'SCRAPING METHODS' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.YELLOW + '1.  ' + Fore.WHITE + 'Playwright Scraper ' + Fore.GREEN + Style.BRIGHT + '(Recommended)' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '2.  ' + Fore.WHITE + 'eBay Browse API ' + Fore.CYAN + '(OAuth 2.0)' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '3.  ' + Fore.WHITE + 'Scrapy Spider ' + Fore.RED + '(Advanced setup)' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.BLUE + Style.BRIGHT + 'VIEW & ANALYZE' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.YELLOW + '4.  ' + Fore.WHITE + 'View Results' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '5.  ' + Fore.WHITE + 'View Card Details' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '6.  ' + Fore.WHITE + 'Database Statistics' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.MAGENTA + Style.BRIGHT + 'DBT ANALYTICS' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.YELLOW + '7.  ' + Fore.WHITE + 'Run dbt Models ' + Fore.GREEN + '(Transform Data)' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '8.  ' + Fore.WHITE + 'Run dbt Tests ' + Fore.CYAN + '(Data Quality)' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '9.  ' + Fore.WHITE + 'View Analytics Results' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '10. ' + Fore.WHITE + 'Generate dbt Docs' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.CYAN + Style.BRIGHT + 'EXPORT & AUTOMATE' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.YELLOW + '11. ' + Fore.WHITE + 'Export to CSV' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '12. ' + Fore.WHITE + 'Upload to S3' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '13. ' + Fore.WHITE + 'Schedule Cron Job' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '14. ' + Fore.WHITE + 'Remove Cron Jobs' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.YELLOW + Style.BRIGHT + 'SETTINGS' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.YELLOW + '15. ' + Fore.WHITE + 'Configure Settings' + Style.RESET_ALL))
-    print(format_menu_line('  ' + Fore.YELLOW + '16. ' + Fore.WHITE + 'Clear Database ' + Fore.RED + '(Warning!)' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╟──────────────────────────────────────────────────────╢')
-    print(format_menu_line('  ' + Fore.RED + '0.  ' + Fore.WHITE + 'Exit' + Style.RESET_ALL))
-    print(Fore.MAGENTA + '╚══════════════════════════════════════════════════════╝')
+    # Border colors - solid purple for consistency
+    border_color = Colors.rgb(138, 43, 226)
+    
+    # Create borders with solid corner characters and gradient middle
+    top_corners = f'{border_color}╔'
+    top_middle = gradient_text('══════════════════════════════════════════════════════', (138, 43, 226), (255, 0, 255))
+    top_end = f'{border_color}╗{Colors.RESET}'
+    border_top = top_corners + top_middle + top_end
+    
+    mid_corners = f'{border_color}╠'
+    mid_middle = gradient_text('══════════════════════════════════════════════════════', (138, 43, 226), (255, 0, 255))
+    mid_end = f'{border_color}╣{Colors.RESET}'
+    border_mid = mid_corners + mid_middle + mid_end
+    
+    sep_corners = f'{border_color}╟'
+    sep_middle = gradient_text('──────────────────────────────────────────────────────', (138, 43, 226), (200, 50, 255))
+    sep_end = f'{border_color}╢{Colors.RESET}'
+    border_sep = sep_corners + sep_middle + sep_end
+    
+    bot_corners = f'{border_color}╚'
+    bot_middle = gradient_text('══════════════════════════════════════════════════════', (138, 43, 226), (255, 0, 255))
+    bot_end = f'{border_color}╝{Colors.RESET}'
+    border_bot = bot_corners + bot_middle + bot_end
+    
+    border_side = f'{border_color}║{Colors.RESET}'
+    
+    print(border_top)
+    
+    # Title with rainbow gradient
+    title = rainbow_gradient('MAIN MENU')
+    title_line = center_colored_text(title, 54)
+    print(f'{border_side}{title_line}{border_side}')
+    
+    print(border_mid)
+    
+    # SCRAPING METHODS section
+    section_title = gradient_text('SCRAPING METHODS', (0, 255, 0), (100, 255, 100))
+    print(format_menu_line('  ' + section_title))
+    print(border_sep)
+    
+    # Menu items with gradients
+    opt1 = gradient_text('1.  ', (255, 215, 0), (255, 165, 0))
+    text1 = gradient_text('Playwright Scraper', (100, 200, 255), (150, 150, 255))
+    rec = gradient_text('(Recommended)', (0, 255, 0), (100, 255, 100))
+    print(format_menu_line(f'  {opt1}{text1} {rec}{Colors.RESET}'))
+    
+    opt2 = gradient_text('2.  ', (255, 215, 0), (255, 165, 0))
+    text2 = gradient_text('eBay Browse API', (100, 200, 255), (150, 150, 255))
+    api = gradient_text('(OAuth 2.0)', (0, 255, 255), (100, 200, 255))
+    print(format_menu_line(f'  {opt2}{text2} {api}{Colors.RESET}'))
+    
+    opt3 = gradient_text('3.  ', (255, 215, 0), (255, 165, 0))
+    text3 = gradient_text('Scrapy Spider', (100, 200, 255), (150, 150, 255))
+    adv = gradient_text('(Advanced setup)', (255, 0, 0), (255, 100, 100))
+    print(format_menu_line(f'  {opt3}{text3} {adv}{Colors.RESET}'))
+    
+    print(border_sep)
+    
+    # VIEW & ANALYZE section
+    section_title = gradient_text('VIEW & ANALYZE', (0, 150, 255), (100, 200, 255))
+    print(format_menu_line('  ' + section_title))
+    print(border_sep)
+    
+    for num, text in [('4.  ', 'View Results'), ('5.  ', 'View Card Details'), ('6.  ', 'Database Statistics')]:
+        opt = gradient_text(num, (255, 215, 0), (255, 165, 0))
+        text_gradient = gradient_text(text, (100, 200, 255), (150, 180, 255))
+        print(format_menu_line(f'  {opt}{text_gradient}{Colors.RESET}'))
+    
+    print(border_sep)
+    
+    # DBT ANALYTICS section
+    section_title = gradient_text('DBT ANALYTICS', (138, 43, 226), (255, 0, 255))
+    print(format_menu_line('  ' + section_title))
+    print(border_sep)
+    
+    opt7 = gradient_text('7.  ', (255, 215, 0), (255, 165, 0))
+    text7 = gradient_text('Run dbt Models', (200, 150, 255), (255, 150, 255))
+    transform = gradient_text('(Transform Data)', (0, 255, 0), (100, 255, 100))
+    print(format_menu_line(f'  {opt7}{text7} {transform}{Colors.RESET}'))
+    
+    opt8 = gradient_text('8.  ', (255, 215, 0), (255, 165, 0))
+    text8 = gradient_text('Run dbt Tests', (200, 150, 255), (255, 150, 255))
+    quality = gradient_text('(Data Quality)', (0, 255, 255), (100, 200, 255))
+    print(format_menu_line(f'  {opt8}{text8} {quality}{Colors.RESET}'))
+    
+    for num, text in [('9.  ', 'View Analytics Results'), ('10. ', 'Generate dbt Docs')]:
+        opt = gradient_text(num, (255, 215, 0), (255, 165, 0))
+        text_gradient = gradient_text(text, (200, 150, 255), (255, 150, 255))
+        print(format_menu_line(f'  {opt}{text_gradient}{Colors.RESET}'))
+    
+    print(border_sep)
+    
+    # EXPORT & AUTOMATE section
+    section_title = gradient_text('EXPORT & AUTOMATE', (0, 255, 255), (100, 255, 200))
+    print(format_menu_line('  ' + section_title))
+    print(border_sep)
+    
+    for num, text in [('11. ', 'Export to CSV'), ('12. ', 'Upload to S3'), 
+                       ('13. ', 'Schedule Cron Job'), ('14. ', 'Remove Cron Jobs')]:
+        opt = gradient_text(num, (255, 215, 0), (255, 165, 0))
+        text_gradient = gradient_text(text, (100, 255, 200), (150, 255, 255))
+        print(format_menu_line(f'  {opt}{text_gradient}{Colors.RESET}'))
+    
+    print(border_sep)
+    
+    # SETTINGS section
+    section_title = gradient_text('SETTINGS', (255, 215, 0), (255, 140, 0))
+    print(format_menu_line('  ' + section_title))
+    print(border_sep)
+    
+    opt15 = gradient_text('15. ', (255, 215, 0), (255, 165, 0))
+    text15 = gradient_text('Configure Settings', (255, 200, 100), (255, 180, 120))
+    print(format_menu_line(f'  {opt15}{text15}{Colors.RESET}'))
+    
+    opt16 = gradient_text('16. ', (255, 215, 0), (255, 165, 0))
+    text16 = gradient_text('Clear Database', (255, 200, 100), (255, 180, 120))
+    warning = gradient_text('(Warning!)', (255, 0, 0), (255, 100, 100))
+    print(format_menu_line(f'  {opt16}{text16} {warning}{Colors.RESET}'))
+    
+    print(border_sep)
+    
+    # EXIT
+    opt0 = gradient_text('0.  ', (255, 0, 0), (255, 100, 100))
+    text0 = gradient_text('Exit', (255, 100, 100), (255, 150, 150))
+    print(format_menu_line(f'  {opt0}{text0}{Colors.RESET}'))
+    
+    print(border_bot)
     print()
 
 
@@ -123,7 +235,8 @@ def ebay_api_search():
     import requests
     from datetime import datetime
     
-    print(Fore.YELLOW + '\n━━━ eBay BROWSE API (OAuth 2.0) ━━━\n')
+    header = gradient_text('━━━ eBay BROWSE API (OAuth 2.0) ━━━', (0, 255, 255), (0, 150, 255))
+    print(f'\n{header}\n')
     print_info('This uses eBay\'s modern RESTful API with OAuth')
     print()
     
@@ -152,11 +265,12 @@ def ebay_api_search():
             return
     
     # Search options
-    print(Fore.CYAN + 'Search by:')
-    print('  1. Card name')
-    print('  2. Set name')
-    print('  3. Card type')
-    print('  4. Custom MTG search')
+    search_title = gradient_text('Search by:', (0, 255, 255), (100, 200, 255))
+    print(search_title)
+    print(gradient_text('  1. Card name', (100, 200, 255), (150, 150, 255)))
+    print(gradient_text('  2. Set name', (100, 200, 255), (150, 150, 255)))
+    print(gradient_text('  3. Card type', (100, 200, 255), (150, 150, 255)))
+    print(gradient_text('  4. Custom MTG search', (100, 200, 255), (150, 150, 255)))
     print()
     
     search_type = input(Fore.GREEN + 'Select search type [1]: ' + Style.RESET_ALL).strip()
@@ -359,16 +473,8 @@ def playwright_scraper():
     '''
     Browser automation scraping with Playwright (bypasses many protections)
     '''
-    print(Fore.YELLOW + '\n━━━ PLAYWRIGHT BROWSER SCRAPER ━━━\n')
-    
-    print(Fore.GREEN + '✅ Advantages:')
-    print('   • Bypasses robots.txt (acts like real browser)')
-    print('   • Handles JavaScript automatically')
-    print('   • Stealth mode - harder to detect')
-    print('   • Can solve simple CAPTCHAs visually')
-    print()
-    print(Fore.YELLOW + '⚠  Note: Slower than Scrapy but more effective')
-    print()
+    header = gradient_text('━━━ PLAYWRIGHT BROWSER SCRAPER ━━━', (0, 255, 200), (150, 100, 255))
+    print(f'\n{header}\n')
     
     # Check if Playwright is installed
     try:
@@ -383,11 +489,12 @@ def playwright_scraper():
         return
     
     # Search options
-    print(Fore.CYAN + 'Search by:')
-    print('  1. Card name')
-    print('  2. Set name')
-    print('  3. Card type (creature, instant, etc.)')
-    print('  4. Custom search')
+    search_title = gradient_text('Search by:', (0, 255, 255), (100, 200, 255))
+    print(search_title)
+    print(gradient_text('  1. Card name', (100, 200, 255), (150, 150, 255)))
+    print(gradient_text('  2. Set name', (100, 200, 255), (150, 150, 255)))
+    print(gradient_text('  3. Card type (creature, instant, etc.)', (100, 200, 255), (150, 150, 255)))
+    print(gradient_text('  4. Custom search', (100, 200, 255), (150, 150, 255)))
     print()
     
     search_type = input(Fore.GREEN + 'Select search type [1]: ' + Style.RESET_ALL).strip()
@@ -411,12 +518,13 @@ def playwright_scraper():
     
     # Sorting options
     print()
-    print(Fore.CYAN + 'Sort by:')
-    print('  1. Best Match (default)')
-    print('  2. Price: Highest First')
-    print('  3. Price: Lowest First')
-    print('  4. Newly Listed')
-    print('  5. Most Bids')
+    sort_title = gradient_text('Sort by:', (255, 215, 0), (255, 165, 0))
+    print(sort_title)
+    print(gradient_text('  1. Best Match (default)', (255, 200, 100), (255, 180, 100)))
+    print(gradient_text('  2. Price: Highest First', (255, 200, 100), (255, 180, 100)))
+    print(gradient_text('  3. Price: Lowest First', (255, 200, 100), (255, 180, 100)))
+    print(gradient_text('  4. Newly Listed', (255, 200, 100), (255, 180, 100)))
+    print(gradient_text('  5. Most Bids', (255, 200, 100), (255, 180, 100)))
     print()
     
     sort_choice = input(Fore.GREEN + 'Select sort option [1]: ' + Style.RESET_ALL).strip()
@@ -701,16 +809,19 @@ def scrape_cards():
     '''
     Interactive scraping menu with Scrapy (fast but blocked by robots.txt)
     '''
-    print(Fore.YELLOW + '\n━━━ SCRAPY SPIDER (Fast HTTP Scraper) ━━━\n')
+    header = gradient_text('━━━ SCRAPY SPIDER (Fast HTTP Scraper) ━━━', (255, 100, 100), (255, 0, 0))
+    print(f'\n{header}\n')
     
-    print(Fore.YELLOW + '⚠  This method is blocked by eBay:')
-    print('   • Respects robots.txt (ROBOTSTXT_OBEY = True)')
-    print('   • HTTP-only (no JavaScript support)')
-    print('   • Expected result: 0 items from eBay')
+    warning_title = gradient_text('⚠  This method is blocked by eBay:', (255, 215, 0), (255, 165, 0))
+    print(warning_title)
+    print(f'   {Colors.BRIGHT_YELLOW}• Respects robots.txt (ROBOTSTXT_OBEY = True){Colors.RESET}')
+    print(f'   {Colors.BRIGHT_YELLOW}• HTTP-only (no JavaScript support){Colors.RESET}')
+    print(f'   {Colors.BRIGHT_YELLOW}• Expected result: 0 items from eBay{Colors.RESET}')
     print()
-    print(Fore.GREEN + '💡 Better options:')
-    print(Fore.CYAN + '   • Option 1: eBay API (legal, reliable)')
-    print(Fore.CYAN + '   • Option 2: Playwright (bypasses robots.txt)\n')
+    better_title = gradient_text('💡 Better options:', (0, 255, 0), (100, 255, 100))
+    print(better_title)
+    print(f'   {Colors.BRIGHT_CYAN}• Option 1: eBay API (legal, reliable){Colors.RESET}')
+    print(f'   {Colors.BRIGHT_CYAN}• Option 2: Playwright (bypasses robots.txt){Colors.RESET}\n')
     
     # Check for CAPTCHA API key
     captcha_key = os.environ.get('CAPTCHA_API_KEY')
@@ -814,66 +925,80 @@ def configure_settings():
     '''
     Configure CAPTCHA and proxy settings
     '''
-    print(Fore.YELLOW + '\n━━━ CONFIGURATION SETTINGS ━━━\n')
+    header = gradient_text('━━━ CONFIGURATION SETTINGS ━━━', (255, 215, 0), (255, 140, 0))
+    print(f'\n{header}\n')
     
-    print(Fore.CYAN + '1. CAPTCHA Solver Configuration')
+    section1 = gradient_text('1. CAPTCHA Solver Configuration', (0, 255, 255), (100, 200, 255))
+    print(section1)
     captcha_configured = os.environ.get('CAPTCHA_API_KEY')
     local_captcha = os.environ.get('USE_LOCAL_CAPTCHA', 'false').lower() == 'true'
     
     if captcha_configured:
-        print('   2Captcha API: ' + Fore.GREEN + 'Configured ✓')
+        status = gradient_text('Configured ✓', (0, 255, 0), (100, 255, 100))
+        print(f'   2Captcha API: {status}')
     else:
-        print('   2Captcha API: ' + Fore.RED + 'Not configured')
+        status = gradient_text('Not configured', (255, 0, 0), (255, 100, 100))
+        print(f'   2Captcha API: {status}')
     
     if local_captcha:
-        print('   Local ML Solver: ' + Fore.GREEN + 'Enabled ✓')
+        status = gradient_text('Enabled ✓', (0, 255, 0), (100, 255, 100))
+        print(f'   Local ML Solver: {status}')
     else:
-        print('   Local ML Solver: ' + Fore.YELLOW + 'Disabled')
+        status = gradient_text('Disabled', (255, 215, 0), (255, 165, 0))
+        print(f'   Local ML Solver: {status}')
     
     print()
-    print('   ' + Fore.YELLOW + 'Option A: 2Captcha (Paid, Reliable)')
-    print('   • Register at: ' + Fore.CYAN + 'https://2captcha.com/')
-    print(Style.RESET_ALL + '   • Cost: ~$3 per 1000 CAPTCHAs')
-    print('   • Setup: ' + Fore.CYAN + 'export CAPTCHA_API_KEY="your-key"')
+    print(gradient_text('   Option A: 2Captcha (Paid, Reliable)', (255, 215, 0), (255, 165, 0)))
+    print(gradient_text('   • Register at: https://2captcha.com/', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Cost: ~$3 per 1000 CAPTCHAs', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Setup: export CAPTCHA_API_KEY="your-key"', (200, 200, 200), (150, 150, 255)))
     print()
-    print('   ' + Fore.YELLOW + 'Option B: Local ML Solver (Free, Experimental)')
-    print('   • Uses TensorFlow + OpenCV')
-    print('   • Free but less reliable')
-    print('   • Setup: ' + Fore.CYAN + 'export USE_LOCAL_CAPTCHA=true')
-    print()
-    
-    print(Fore.CYAN + '2. Proxy Configuration')
-    print('   Current: ' + (Fore.GREEN + 'Configured' if os.environ.get('PROXY_LIST') else Fore.RED + 'Not configured'))
-    print()
-    print('   To enable rotating proxies:')
-    print('   • Get proxy list from providers like:')
-    print('     - Bright Data (residential proxies)')
-    print('     - Oxylabs')
-    print('     - ScraperAPI')
-    print('   • Create proxies.txt with format: http://user:pass@host:port')
-    print('   • Run: ' + Fore.CYAN + 'export PROXY_LIST="proxies.txt"')
+    print(gradient_text('   Option B: Local ML Solver (Free, Experimental)', (255, 215, 0), (255, 165, 0)))
+    print(gradient_text('   • Uses TensorFlow + OpenCV', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Free but less reliable', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Setup: export USE_LOCAL_CAPTCHA=true', (200, 200, 200), (150, 150, 255)))
     print()
     
-    print(Fore.CYAN + '3. eBay Browse API (OAuth 2.0)')
+    section2 = gradient_text('2. Proxy Configuration', (0, 255, 255), (100, 200, 255))
+    print(section2)
+    if os.environ.get('PROXY_LIST'):
+        status = gradient_text('Configured', (0, 255, 0), (100, 255, 100))
+    else:
+        status = gradient_text('Not configured', (255, 0, 0), (255, 100, 100))
+    print(f'   Current: {status}')
+    print()
+    print(gradient_text('   To enable rotating proxies:', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Get proxy list from providers like:', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('     - Bright Data (residential proxies)', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('     - Oxylabs', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('     - ScraperAPI', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Create proxies.txt with format: http://user:pass@host:port', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Run: export PROXY_LIST="proxies.txt"', (200, 200, 200), (150, 150, 255)))
+    print()
+    
+    section3 = gradient_text('3. eBay Browse API (OAuth 2.0)', (0, 255, 255), (100, 200, 255))
+    print(section3)
     client_id = os.environ.get('EBAY_CLIENT_ID')
     client_secret = os.environ.get('EBAY_CLIENT_SECRET')
     
     if client_id and client_secret:
-        print('   Current: ' + Fore.GREEN + 'Configured ✓')
+        status = gradient_text('Configured ✓', (0, 255, 0), (100, 255, 100))
     elif client_id or client_secret:
-        print('   Current: ' + Fore.YELLOW + 'Partially configured (missing one credential)')
+        status = gradient_text('Partially configured (missing one credential)', (255, 215, 0), (255, 165, 0))
     else:
-        print('   Current: ' + Fore.RED + 'Not configured')
+        status = gradient_text('Not configured', (255, 0, 0), (255, 100, 100))
+    print(f'   Current: {status}')
     
     print()
-    print('   To enable eBay Browse API:')
-    print('   • Register at: ' + Fore.YELLOW + 'https://developer.ebay.com/')
-    print(Style.RESET_ALL + '   • Create application and get OAuth credentials')
-    print('   • Run: ' + Fore.CYAN + 'export EBAY_CLIENT_ID="your-app-id"')
-    print('   • Run: ' + Fore.CYAN + 'export EBAY_CLIENT_SECRET="your-cert-id"')
+    print(gradient_text('   To enable eBay Browse API:', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Register at: https://developer.ebay.com/', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Create application and get OAuth credentials', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Run: export EBAY_CLIENT_ID="your-app-id"', (200, 200, 200), (150, 150, 255)))
+    print(gradient_text('   • Run: export EBAY_CLIENT_SECRET="your-cert-id"', (200, 200, 200), (150, 150, 255)))
     print()
     
-    print(Fore.YELLOW + 'Tip: Add exports to ~/.zshrc or ~/.bashrc to make them permanent')
+    tip = gradient_text('💡 Tip: Add exports to ~/.zshrc or ~/.bashrc to make them permanent', (255, 215, 0), (255, 140, 0))
+    print(tip)
     print()
 
 
@@ -887,7 +1012,8 @@ def view_results():
         print_error('No database found. Run a scrape first!')
         return
     
-    print(Fore.YELLOW + '\n━━━ VIEW RESULTS ━━━\n')
+    header = gradient_text('━━━ VIEW RESULTS ━━━', (0, 255, 255), (100, 200, 255))
+    print(f'\n{header}\n')
     
     limit = input(Fore.CYAN + 'Number of results to show [20]: ' + Style.RESET_ALL).strip()
     limit = int(limit) if limit.isdigit() else 20
@@ -945,7 +1071,8 @@ def view_detail():
         print_error('No database found. Run a scrape first!')
         return
     
-    print(Fore.YELLOW + '\n━━━ VIEW CARD DETAILS ━━━\n')
+    header = gradient_text('━━━ VIEW CARD DETAILS ━━━', (138, 43, 226), (255, 0, 255))
+    print(f'\n{header}\n')
     
     card_id = input(Fore.CYAN + 'Enter card ID: ' + Style.RESET_ALL).strip()
     if not card_id.isdigit():
@@ -995,7 +1122,8 @@ def show_stats():
         print_error('No database found. Run a scrape first!')
         return
     
-    print(Fore.YELLOW + '\n━━━ DATABASE STATISTICS ━━━\n')
+    header = gradient_text('━━━ DATABASE STATISTICS ━━━', (0, 255, 0), (100, 255, 100))
+    print(f'\n{header}\n')
     
     try:
         engine = create_engine(f'sqlite:///{db_path}')
@@ -1037,7 +1165,8 @@ def export_to_csv():
         print_error('No database found. Run a scrape first!')
         return
     
-    print(Fore.YELLOW + '\n━━━ EXPORT TO CSV ━━━\n')
+    header = gradient_text('━━━ EXPORT TO CSV ━━━', (0, 255, 255), (100, 255, 200))
+    print(f'\n{header}\n')
     
     try:
         import csv
@@ -1095,7 +1224,8 @@ def upload_to_s3():
     '''
     Upload CSV export to S3 bucket
     '''
-    print(Fore.YELLOW + '\n━━━ UPLOAD TO S3 ━━━\n')
+    header = gradient_text('━━━ UPLOAD TO S3 ━━━', (255, 215, 0), (255, 140, 0))
+    print(f'\n{header}\n')
     
     # Check for boto3
     try:
@@ -1187,16 +1317,18 @@ def schedule_cron():
     '''
     Setup cron job for automated scraping
     '''
-    print(Fore.YELLOW + '\n━━━ SCHEDULE CRON JOB ━━━\n')
+    header = gradient_text('━━━ SCHEDULE CRON JOB ━━━', (138, 43, 226), (255, 0, 255))
+    print(f'\n{header}\n')
     
     print('This will create a cron job to run the scraper automatically.')
     print()
     
     # Get scraper settings
-    print(Fore.CYAN + 'Scraping method:')
-    print('  1. Playwright (recommended)')
-    print('  2. eBay API')
-    print('  3. Scrapy')
+    method_title = gradient_text('Scraping method:', (0, 255, 255), (100, 200, 255))
+    print(method_title)
+    print(gradient_text('  1. Playwright (recommended)', (100, 200, 255), (150, 150, 255)))
+    print(gradient_text('  2. eBay API', (100, 200, 255), (150, 150, 255)))
+    print(gradient_text('  3. Scrapy', (100, 200, 255), (150, 150, 255)))
     print()
     
     method = input(Fore.GREEN + 'Select method [1]: ' + Style.RESET_ALL).strip()
@@ -1209,12 +1341,13 @@ def schedule_cron():
     
     # Schedule frequency
     print()
-    print(Fore.CYAN + 'Run frequency:')
-    print('  1. Every hour')
-    print('  2. Every 6 hours')
-    print('  3. Daily at specific time')
-    print('  4. Weekly on specific day')
-    print('  5. Custom cron expression')
+    freq_title = gradient_text('Run frequency:', (138, 43, 226), (255, 0, 255))
+    print(freq_title)
+    print(gradient_text('  1. Every hour', (200, 150, 255), (255, 150, 255)))
+    print(gradient_text('  2. Every 6 hours', (200, 150, 255), (255, 150, 255)))
+    print(gradient_text('  3. Daily at specific time', (200, 150, 255), (255, 150, 255)))
+    print(gradient_text('  4. Weekly on specific day', (200, 150, 255), (255, 150, 255)))
+    print(gradient_text('  5. Custom cron expression', (200, 150, 255), (255, 150, 255)))
     print()
     
     freq = input(Fore.GREEN + 'Select frequency [1]: ' + Style.RESET_ALL).strip()
@@ -1315,7 +1448,8 @@ def remove_cron():
     '''
     import subprocess
     
-    print(Fore.YELLOW + '\n━━━ REMOVE CRON JOBS ━━━\n')
+    header = gradient_text('━━━ REMOVE CRON JOBS ━━━', (255, 0, 0), (255, 100, 100))
+    print(f'\n{header}\n')
     
     script_path = os.path.abspath(__file__)
     
@@ -1406,7 +1540,8 @@ def run_dbt_models():
     '''
     Run dbt models to transform data
     '''
-    print(Fore.YELLOW + '\n━━━ RUN DBT MODELS ━━━\n')
+    header = gradient_text('━━━ RUN DBT MODELS ━━━', (138, 43, 226), (255, 0, 255))
+    print(f'\n{header}\n')
     
     # Check if dbt is installed
     try:
@@ -1467,7 +1602,8 @@ def run_dbt_tests():
     '''
     Run dbt tests for data quality
     '''
-    print(Fore.YELLOW + '\n━━━ RUN DBT TESTS ━━━\n')
+    header = gradient_text('━━━ RUN DBT TESTS ━━━', (0, 255, 255), (100, 200, 255))
+    print(f'\n{header}\n')
     
     print_info('Running data quality tests...')
     print()
@@ -1508,13 +1644,15 @@ def view_dbt_analytics():
         print_error('No database found. Run a scrape first!')
         return
     
-    print(Fore.YELLOW + '\n━━━ DBT ANALYTICS RESULTS ━━━\n')
+    header = gradient_text('━━━ DBT ANALYTICS RESULTS ━━━', (138, 43, 226), (255, 0, 255))
+    print(f'\n{header}\n')
     
-    print(Fore.CYAN + 'Select analytics to view:')
-    print('  1. Card Price Statistics')
-    print('  2. Price Trends Over Time')
-    print('  3. Top Cards (Hottest Cards)')
-    print('  4. Custom SQL Query')
+    select_title = gradient_text('Select analytics to view:', (138, 43, 226), (255, 0, 255))
+    print(select_title)
+    print(gradient_text('  1. Card Price Statistics', (200, 150, 255), (255, 150, 255)))
+    print(gradient_text('  2. Price Trends Over Time', (200, 150, 255), (255, 150, 255)))
+    print(gradient_text('  3. Top Cards (Hottest Cards)', (200, 150, 255), (255, 150, 255)))
+    print(gradient_text('  4. Custom SQL Query', (200, 150, 255), (255, 150, 255)))
     print()
     
     choice = input(Fore.GREEN + 'Select option [1]: ' + Style.RESET_ALL).strip()
@@ -1639,7 +1777,8 @@ def generate_dbt_docs():
     '''
     Generate dbt documentation
     '''
-    print(Fore.YELLOW + '\n━━━ GENERATE DBT DOCUMENTATION ━━━\n')
+    header = gradient_text('━━━ GENERATE DBT DOCUMENTATION ━━━', (0, 255, 200), (150, 100, 255))
+    print(f'\n{header}\n')
     
     print_info('Generating dbt documentation...')
     print()
@@ -1696,7 +1835,8 @@ def clear_database():
         print_error('No database found.')
         return
     
-    print(Fore.YELLOW + '\n━━━ CLEAR DATABASE ━━━\n')
+    header = gradient_text('━━━ CLEAR DATABASE ━━━', (255, 0, 0), (255, 100, 100))
+    print(f'\n{header}\n')
     confirm = input(Fore.RED + 'Are you sure you want to delete all data? (yes/no): ' + Style.RESET_ALL).strip().lower()
     
     if confirm == 'yes':
@@ -1753,7 +1893,8 @@ def interactive_menu():
             clear_database()
         elif choice == '0':
             print()
-            print(Fore.CYAN + '🃏  Thanks for using MTG Scraper! Happy hunting!')
+            farewell = gradient_text('🃏  Thanks for using MTG Scraper! Happy hunting!', (0, 255, 255), (138, 43, 226))
+            print(farewell)
             print()
             break
         else:

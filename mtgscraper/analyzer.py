@@ -5,6 +5,7 @@ Discovers selectors automatically by analyzing the page structure
 
 import re
 from collections import Counter
+from mtgscraper.colors import Colors, gradient_text
 
 
 class PageStructureAnalyzer:
@@ -20,7 +21,8 @@ class PageStructureAnalyzer:
         '''
         Analyze the page structure and discover selectors
         '''
-        print('   Analyzing page structure...')
+        analyzing_text = gradient_text('   🔍 Analyzing page structure...', (0, 255, 255), (150, 100, 255))
+        print(analyzing_text)
         
         # Use JavaScript to analyze the DOM
         analysis = self.page.evaluate(r'''
@@ -159,12 +161,20 @@ class PageStructureAnalyzer:
             }
         ''')
         
-        print(f'   ✓ Containers: {analysis["patterns"]["containerClass"]} ({analysis["patterns"]["containerCount"]} found)')
-        print(f'   ✓ Prices: {analysis["prices"]["bestSelector"]} ({analysis["prices"]["count"]} found)')
-        print(f'   ✓ Titles: {analysis["titles"]["bestSelector"]} ({analysis["titles"]["count"]} found)')
+        # Pretty output with gradients
+        container_text = gradient_text(f'   ✓ Containers:', (0, 255, 0), (100, 255, 100))
+        print(f'{container_text} {Colors.BRIGHT_CYAN}{analysis["patterns"]["containerClass"]}{Colors.RESET} ({Colors.BRIGHT_YELLOW}{analysis["patterns"]["containerCount"]} found{Colors.RESET})')
+        
+        price_text = gradient_text(f'   ✓ Prices:', (0, 255, 0), (100, 255, 100))
+        print(f'{price_text} {Colors.BRIGHT_CYAN}{analysis["prices"]["bestSelector"]}{Colors.RESET} ({Colors.BRIGHT_YELLOW}{analysis["prices"]["count"]} found{Colors.RESET})')
+        
+        title_text = gradient_text(f'   ✓ Titles:', (0, 255, 0), (100, 255, 100))
+        print(f'{title_text} {Colors.BRIGHT_CYAN}{analysis["titles"]["bestSelector"]}{Colors.RESET} ({Colors.BRIGHT_YELLOW}{analysis["titles"]["count"]} found{Colors.RESET})')
         
         if analysis['prices']['samples']:
-            print(f'   ✓ Sample prices: {", ".join(analysis["prices"]["samples"][:3])}')
+            sample_text = gradient_text(f'   ✓ Sample prices:', (0, 255, 0), (100, 255, 100))
+            samples = ', '.join([gradient_text(s, (0, 255, 0), (100, 255, 200)) for s in analysis["prices"]["samples"][:3]])
+            print(f'{sample_text} {samples}')
         
         self.discovered_selectors = {
             'container': '.' + analysis['patterns']['containerClass'],
