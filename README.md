@@ -487,11 +487,7 @@ This scraper includes production-ready features:
 ## Troubleshooting
 
 ### Common Issues
-
-**eBay Scraping Blocked / robots.txt**
-- **This is expected!** eBay blocks scraping via robots.txt
-- **Solution**: Use **option 1 (eBay API)**
-- 
+  
 **CAPTCHA Challenges**
 - **Option 1 (Recommended):** Use 2Captcha API (~$3 per 1000 solves)
   - `export CAPTCHA_API_KEY="your-key"`
