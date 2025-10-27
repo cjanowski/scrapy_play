@@ -2,15 +2,8 @@
 
 A CLI tool for collecting Magic: The Gathering card prices. Features **eBay API integration**, **advanced web scraping** with CAPTCHA solving and proxy rotation, and a beautiful interactive menu interface.
 
-**Recommended:** Use **Playwright (option 1)** for scraping, with adaptive structure analysis.
-```
-    __  _______________   _____                                
-   /  |/  /_  __/ ____/  / ___/______________ _____  ___  _____
-  / /|_/ / / / / / __    \__ \/ ___/ ___/ __ `/ __ \/ _ \/ ___/
- / /  / / / / / /_/ /   ___/ / /__/ /  / /_/ / /_/ /  __/ /    
-/_/  /_/ /_/  \____/   /____/\___/_/   \__,_/ .___/\___/_/     
-                                           /_/                 
-```
+<img width="1512" height="982" alt="Screenshot 2025-10-27 at 11 00 16 AM" src="https://github.com/user-attachments/assets/1d117b8e-8751-4300-b65b-d1bc833db9bb" />
+<img width="1512" height="982" alt="Screenshot 2025-10-27 at 11 00 51 AM" src="https://github.com/user-attachments/assets/d66073e5-6298-423e-b053-6c5389be7de6" />
 
 ## Demo Video
 
