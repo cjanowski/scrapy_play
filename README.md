@@ -183,6 +183,7 @@ export USE_LOCAL_CAPTCHA=true
 **Tip:** Both are optional! The scraper works without CAPTCHA solving.
 
 **3. Rotating Proxies (For large-scale scraping):**
+[Get Proxy rotation with Proxy Rot here:](https://github.com/cjanowski/proxy-rot)
 ```bash
 # Create proxies.txt with format: http://user:pass@host:port
 export PROXY_LIST="proxies.txt"
